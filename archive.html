@@ -6,14 +6,12 @@
     <title>ISL ARCHIVE</title>
     <link rel="stylesheet" href="https://unpkg.com/terminal.css@0.7.4/dist/terminal.min.css">
     <style>
-        /* Body style to use flex layout */
         body {
             display: flex;
             height: 100vh;
             margin: 0;
         }
 
-        /* Sidebar styles */
         .sidebar {
             width: 250px;
             background-color: #2c2f36;
@@ -40,7 +38,6 @@
             color: #ffcc00;
         }
 
-        /* Content window styles */
         .content {
             flex-grow: 1;
             padding: 20px;
@@ -48,11 +45,10 @@
             color: white;
         }
 
-        /* Terminal Bar */
         .terminal-bar {
             background-color: #333;
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-between; /* Align items to both ends */
             padding: 5px;
         }
 
@@ -67,7 +63,6 @@
         .terminal-yellow { background-color: yellow; }
         .terminal-green { background-color: green; }
 
-        /* Terminal Window */
         .terminal-window {
             background-color: #111;
             padding: 20px;
@@ -86,7 +81,6 @@
             background-color: #ffcc00;
         }
 
-        /* Post Styling */
         .post {
             background-color: #333;
             padding: 15px;
@@ -95,19 +89,12 @@
             position: relative;
         }
 
-        /* Custom scaling for images */
-        .post img {
-            max-width: 600px; /* Set a maximum width for the images */
-            width: 100%;      /* Ensure images are responsive */
-            height: auto;     /* Maintain aspect ratio */
-            object-fit: contain; /* Ensure the entire image fits in the container */
-        }
-
-        .post video {
-            max-width: 100%; /* Ensure videos fit within the container */
-            height: auto; /* Preserve aspect ratio */
-            object-fit: cover; /* Prevent stretching */
+        .post img, .post video {
+            max-width: 600px; /* Set a maximum width for images */
+            height: auto;
+            object-fit: contain; /* Prevent stretching */
             border-radius: 5px;
+            cursor: pointer; /* Add pointer cursor for clickable images/videos */
         }
 
         .post-title {
@@ -127,7 +114,6 @@
             gap: 15px;
         }
 
-        /* Minimize Button Styling */
         .minimize-btn {
             position: absolute;
             top: 5px;
@@ -135,8 +121,8 @@
             background-color: transparent;
             color: white;
             border: none;
-            font-size: 1.8rem; /* Increased font size */
-            padding: 5px; /* Added padding to make the button larger */
+            font-size: 1.8rem;
+            padding: 5px;
             cursor: pointer;
         }
 
@@ -144,9 +130,38 @@
             display: none;
         }
 
-        /* Added margin to make the month and museum tabs more consistent */
         .sidebar .month, .sidebar .museum-tab {
             margin-bottom: 15px;
+        }
+
+        /* Dropdown Styling */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #333;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ffcc00;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
         }
     </style>
 </head>
@@ -164,79 +179,60 @@
         <div class="terminal">
             <!-- Terminal Bar -->
             <div class="terminal-bar">
-                <span class="terminal-icon terminal-red"></span>
-                <span class="terminal-icon terminal-yellow"></span>
-                <span class="terminal-icon terminal-green"></span>
+                <div>
+                    <span class="terminal-icon terminal-red"></span>
+                    <span class="terminal-icon terminal-yellow"></span>
+                    <span class="terminal-icon terminal-green"></span>
+                </div>
+                <!-- Back to Home and Sort Dropdown -->
+                <div>
+                    <button onclick="window.location.href='/'" class="btn">Back to Home</button>
+                    
+                    <!-- Sort Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn">Sort</button>
+                        <div class="dropdown-content">
+                            <a href="#" onclick="sortPosts('image')">Images</a>
+                            <a href="#" onclick="sortPosts('video')">Videos</a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Terminal Window -->
             <div class="terminal-window">
-                <h1>dont</h1>
-                <p>care</p>
-                <button onclick="window.location.href='/'" class="btn">Back to Home</button>
-                
+                <h1>Dont</h1>
+                <p>CARE</p>
+
                 <!-- Posts -->
-                <div id="posts" class="month-posts">
-                    <!-- Dynamic Posts will appear here -->
-                </div>
+                <div id="posts" class="month-posts"></div>
             </div>
         </div>
     </div>
 
-    <!-- Add JavaScript at the end of the body -->
     <script>
         const posts = {
             november: [
-                {
-                    title: "NL_FA",
-                    date: "2024-11-15",
-                    type: "image",
-                    src: "IMG_7888.jpg",  // Example image source
-                },
-                {
-                    title: "ISL Digest Week#1",
-                    date: "2024-11-14",
-                    type: "video",
-                    src: "ISL_DIGEST.mp4",  // Example video source
-                }
+                { title: "NL_FA", date: "2024-11-15", type: "image", src: "IMG_7888.jpg" },
+                { title: "ISL Digest Week#1", date: "2024-11-14", type: "video", src: "ISL_DIGEST.mp4" }
             ],
             december: [
-                {
-                    title: "Post 2",
-                    date: "2024-12-05",
-                    type: "image",
-                    src: "image2.jpg",  // Example image source
-                },
-                {
-                    title: "Another Video Post",
-                    date: "2024-12-01",
-                    type: "video",
-                    src: "video2.mp4",  // Example video source
-                }
+                { title: "Post 2", date: "2024-12-05", type: "image", src: "image2.jpg" },
+                { title: "Another Video Post", date: "2024-12-01", type: "video", src: "video2.mp4" }
             ],
             museum: [
-                {
-                    title: "tacobellguy",
-                    date: "2024-11-15",
-                    type: "video",
-                    src: "tacobellguy.mp4",  // Example image source
-                },
-                {
-                    title: "Soybomberhelloween",
-                    date: "2024-11-14",
-                    type: "video",
-                    src: "Soybomberhelloween.mp4",  // Example video source
-                }
+                { title: "tacobellguy", date: "2024-11-13", type: "video", src: "tacobellguy.mp4" },
+                { title: "Soybomberhelloween", date: "2024-11-12", type: "video", src: "Soybomberhelloween.mp4" }
             ]
         };
 
-        function showPosts(month) {
+        function showPosts(month, filterType = null) {
             const postsContainer = document.getElementById('posts');
             postsContainer.innerHTML = ''; // Clear previous posts
 
-            const sortedPosts = posts[month].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const filteredPosts = filterType ? posts[month].filter(post => post.type === filterType) : posts[month];
 
-            sortedPosts.forEach(post => {
+            filteredPosts.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(post => {
                 const postElement = document.createElement('div');
                 postElement.classList.add('post');
 
@@ -256,11 +252,10 @@
 
                 const mediaElement = document.createElement(post.type === "video" ? 'video' : 'img');
                 mediaElement.src = post.src;
+                mediaElement.onclick = () => togglePostVisibility(postElement);
 
                 if (post.type === 'video') {
                     mediaElement.controls = true;
-                    mediaElement.width = 400;
-                    mediaElement.height = 225;
                 }
 
                 const contentDiv = document.createElement('div');
@@ -279,9 +274,19 @@
             postElement.classList.toggle('minimized');
         }
 
-        function showMuseum() {
-            showPosts('museum');  // Show the museum posts when clicked
+        function sortPosts(type) {
+            const currentMonth = document.querySelector('.month.active')?.textContent.toLowerCase();
+            if (currentMonth) {
+                showPosts(currentMonth, type);
+            }
         }
+
+        function showMuseum() {
+            showPosts('museum');
+        }
+
+        // Show November posts on initial load
+        showPosts('november');
     </script>
 </body>
 </html>
