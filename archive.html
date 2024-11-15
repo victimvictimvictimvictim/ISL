@@ -53,7 +53,7 @@
         .terminal-bar {
             background-color: #333;
             display: flex;
-            justify-content: space-between; /* Align items to both ends */
+            justify-content: space-between;
             padding: 5px;
         }
 
@@ -95,17 +95,17 @@
         }
 
         .post img, .post video {
-            max-width: 600px; /* Set a maximum width for images */
+            max-width: 600px;
             height: auto;
-            object-fit: contain; /* Prevent stretching */
+            object-fit: contain;
             border-radius: 5px;
-            cursor: pointer; /* Add pointer cursor for clickable images/videos */
+            cursor: pointer;
         }
 
         .post-title {
             font-size: 1.5rem;
             margin-bottom: 5px;
-            cursor: pointer; /* Make the title clickable */
+            cursor: pointer;
         }
 
         .post-date {
@@ -139,7 +139,6 @@
             margin-bottom: 15px;
         }
 
-        /* Dropdown Styling */
         .dropdown {
             position: relative;
             display: inline-block;
@@ -171,29 +170,23 @@
     </style>
 </head>
 <body class="terminal-dark">
-    <!-- Sidebar -->
     <div class="sidebar">
         <h2>ISL ARCHIVE</h2>
         <div class="month" onclick="setActiveMonth('december')">DEC24</div>
         <div class="month" onclick="setActiveMonth('november')">NOV24</div>
-        <div class="museum-tab" onclick="setActiveMonth('museum')">Museum</div>
+        <div class="museum-tab" onclick="showMuseum()">Museum</div>
     </div>
 
-    <!-- Content Area -->
     <div class="content">
         <div class="terminal">
-            <!-- Terminal Bar -->
             <div class="terminal-bar">
                 <div>
                     <span class="terminal-icon terminal-red"></span>
                     <span class="terminal-icon terminal-yellow"></span>
                     <span class="terminal-icon terminal-green"></span>
                 </div>
-                <!-- Back to Home and Sort Dropdown -->
                 <div>
                     <button onclick="window.location.href='/'" class="btn">Back to Home</button>
-                    
-                    <!-- Sort Dropdown -->
                     <div class="dropdown">
                         <button class="btn">Sort</button>
                         <div class="dropdown-content">
@@ -205,12 +198,10 @@
                 </div>
             </div>
 
-            <!-- Terminal Window -->
             <div class="terminal-window">
                 <h1>Welcome to the Terminal</h1>
                 <p>Here are the posts from the selected month.</p>
 
-                <!-- Posts -->
                 <div id="posts" class="month-posts"></div>
             </div>
         </div>
@@ -218,6 +209,7 @@
 
     <script>
         let activeMonth = 'november';  // Default active month
+        let currentSortType = null; // Track the current sort type (all, image, video)
 
         const posts = {
             november: [
@@ -238,7 +230,12 @@
             activeMonth = month;  // Set active month
             document.querySelectorAll('.month').forEach(m => m.classList.remove('active'));
             document.querySelector(`.month[onclick="setActiveMonth('${month}')"]`).classList.add('active');
-            showPosts(month);
+            
+            if (month === 'museum') {
+                showPosts(month);  // Show museum posts directly
+            } else {
+                showPosts(month, currentSortType);  // Apply sort if not museum
+            }
         }
 
         function showPosts(month, filterType = null) {
@@ -261,12 +258,20 @@
                 const minimizeButton = document.createElement('button');
                 minimizeButton.classList.add('minimize-btn');
                 minimizeButton.innerText = '-';
-                minimizeButton.onclick = () => togglePostVisibility(postElement);
+                minimizeButton.onclick = () => {
+                    if (post.type === "image") {
+                        togglePostVisibility(postElement);
+                    }
+                };
 
                 const titleElement = document.createElement('h2');
                 titleElement.classList.add('post-title');
                 titleElement.innerText = post.title;
-                titleElement.onclick = () => togglePostVisibility(postElement);
+                titleElement.onclick = () => {
+                    if (post.type === "image") {
+                        togglePostVisibility(postElement);
+                    }
+                };
 
                 const dateElement = document.createElement('p');
                 dateElement.classList.add('post-date');
@@ -274,7 +279,11 @@
 
                 const mediaElement = document.createElement(post.type === "video" ? 'video' : 'img');
                 mediaElement.src = post.src;
-                mediaElement.onclick = () => togglePostVisibility(postElement);
+                mediaElement.onclick = () => {
+                    if (post.type === "image") {
+                        togglePostVisibility(postElement);
+                    }
+                };
 
                 if (post.type === 'video') {
                     mediaElement.controls = true;
@@ -292,21 +301,14 @@
             });
         }
 
-        function togglePostVisibility(postElement) {
-            postElement.classList.toggle('minimized');
-        }
-
         function sortPosts(type) {
+            currentSortType = type;  // Store the selected sort type
             showPosts(activeMonth, type);  // Use the active month and filter by type
         }
 
-        // Event listener for the Museum tab
-        document.getElementById('museum-tab').addEventListener('click', () => {
-            setActiveMonth('museum');
-        });
-
-        // Show November posts on initial load
-        setActiveMonth('november');
+        function togglePostVisibility(postElement) {
+            postElement.classList.toggle('minimized');
+        }
     </script>
 </body>
 </html>
