@@ -179,7 +179,7 @@
         }
 
         .song-title {
-            margin-top: 20px;
+            margin-top: 10px; /* Adjusting position to be right under the slider */
             font-size: 1.2rem;
             color: #fff;
             font-family: "Courier New", Courier, monospace; /* Terminal-style font */
@@ -233,6 +233,7 @@
             </div>
         </div>
 
+        <!-- Song title placed directly under the slider -->
         <div id="current-song-title" class="song-title"></div>
     </div>
 
@@ -273,8 +274,6 @@
             } else {
                 filteredPosts = posts[month].filter(post => post.type === filterType);
             }
-
-            filteredPosts.sort((a, b) => new Date(b.date) - new Date(a.date)); 
 
             filteredPosts.forEach(post => {
                 const postElement = document.createElement('div');
