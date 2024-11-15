@@ -168,7 +168,6 @@
             display: block;
         }
 
-        /* Styling for the new audio controls */
         .audio-controls {
             margin-top: 20px;
         }
@@ -179,10 +178,10 @@
         }
 
         .song-title {
-            margin-top: 10px; /* Adjusting position to be right under the slider */
+            margin-top: 10px;
             font-size: 1.2rem;
             color: #fff;
-            font-family: "Courier New", Courier, monospace; /* Terminal-style font */
+            font-family: "Courier New", Courier, monospace;
             white-space: nowrap;
         }
     </style>
@@ -195,7 +194,6 @@
         <div class="month" onclick="setActiveMonth('museum')">Museum</div>
         <div class="play-random-mp3-btn" onclick="playRandomMP3()">ISL RADIO</div>
 
-        <!-- Audio controls added below -->
         <div class="audio-controls">
             <button onclick="pauseAudio()" id="pauseButton" class="btn">Pause</button>
             <button onclick="skipAudio()" id="skipButton" class="btn">Skip</button>
@@ -233,13 +231,12 @@
             </div>
         </div>
 
-        <!-- Song title placed directly under the slider -->
         <div id="current-song-title" class="song-title"></div>
     </div>
 
     <script>
-        let activeMonth = 'november';  
-        let currentSortType = null; 
+        let activeMonth = 'november';
+        let currentSortType = 'all';
         let audio = null; // Global variable for audio player
 
         const posts = {
@@ -258,18 +255,23 @@
         };
 
         function setActiveMonth(month) {
-            activeMonth = month;  
+            activeMonth = month;
             document.querySelectorAll('.month').forEach(m => m.classList.remove('active'));
             document.querySelector(`.month[onclick="setActiveMonth('${month}')"]`).classList.add('active');
-            showPosts(month, currentSortType);  
+            showPosts(month, currentSortType);
         }
 
-        function showPosts(month, filterType = null) {
+        function sortPosts(sortType) {
+            currentSortType = sortType;
+            showPosts(activeMonth, sortType);
+        }
+
+        function showPosts(month, filterType = 'all') {
             const postsContainer = document.getElementById('posts');
             postsContainer.innerHTML = '';
 
             let filteredPosts;
-            if (filterType === 'all' || !filterType) {
+            if (filterType === 'all') {
                 filteredPosts = posts[month];
             } else {
                 filteredPosts = posts[month].filter(post => post.type === filterType);
@@ -329,6 +331,7 @@
             });
         }
 
+        // Audio functions
         const mp3Files = [
             '/audio/e13x3-without.mp3',
             '/audio/Lilniina - cigirl (Official Music Video).mp3',
@@ -342,7 +345,6 @@
         let currentSongIndex = 0;
 
         function playRandomMP3() {
-            // Play a random song
             currentSongIndex = Math.floor(Math.random() * mp3Files.length);
 
             if (!audio) {
