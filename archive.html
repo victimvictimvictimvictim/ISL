@@ -38,6 +38,11 @@
             color: #ffcc00;
         }
 
+        .month.active {
+            color: #ffcc00;
+            font-weight: bold;
+        }
+
         .content {
             flex-grow: 1;
             padding: 20px;
@@ -169,8 +174,8 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <h2>ISL ARCHIVE</h2>
-        <div class="month" onclick="showPosts('december')">DEC24</div>
-        <div class="month" onclick="showPosts('november')">NOV24</div>
+        <div class="month" onclick="setActiveMonth('december')">DEC24</div>
+        <div class="month" onclick="setActiveMonth('november')">NOV24</div>
         <div class="museum-tab" onclick="showMuseum()">Museum</div>
     </div>
 
@@ -201,8 +206,8 @@
 
             <!-- Terminal Window -->
             <div class="terminal-window">
-                <h1>Dont</h1>
-                <p>CARE</p>
+                <h1>Welcome to the Terminal</h1>
+                <p>Here are the posts from the selected month.</p>
 
                 <!-- Posts -->
                 <div id="posts" class="month-posts"></div>
@@ -211,6 +216,8 @@
     </div>
 
     <script>
+        let activeMonth = 'november';  // Default active month
+
         const posts = {
             november: [
                 { title: "NL_FA", date: "2024-11-15", type: "image", src: "IMG_7888.jpg" },
@@ -225,6 +232,13 @@
                 { title: "Soybomberhelloween", date: "2024-11-12", type: "video", src: "Soybomberhelloween.mp4" }
             ]
         };
+
+        function setActiveMonth(month) {
+            activeMonth = month;  // Set active month
+            document.querySelectorAll('.month').forEach(m => m.classList.remove('active'));
+            document.querySelector(`.month[onclick="setActiveMonth('${month}')"]`).classList.add('active');
+            showPosts(month);
+        }
 
         function showPosts(month, filterType = null) {
             const postsContainer = document.getElementById('posts');
@@ -275,18 +289,16 @@
         }
 
         function sortPosts(type) {
-            const currentMonth = document.querySelector('.month.active')?.textContent.toLowerCase();
-            if (currentMonth) {
-                showPosts(currentMonth, type);
-            }
+            showPosts(activeMonth, type);  // Use the active month
         }
 
         function showMuseum() {
+            activeMonth = 'museum';
             showPosts('museum');
         }
 
         // Show November posts on initial load
-        showPosts('november');
+        setActiveMonth('november');
     </script>
 </body>
 </html>
