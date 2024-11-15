@@ -197,6 +197,7 @@
                     <div class="dropdown">
                         <button class="btn">Sort</button>
                         <div class="dropdown-content">
+                            <a href="#" onclick="sortPosts('all')">All</a>
                             <a href="#" onclick="sortPosts('image')">Images</a>
                             <a href="#" onclick="sortPosts('video')">Videos</a>
                         </div>
@@ -244,7 +245,12 @@
             const postsContainer = document.getElementById('posts');
             postsContainer.innerHTML = ''; // Clear previous posts
 
-            const filteredPosts = filterType ? posts[month].filter(post => post.type === filterType) : posts[month];
+            let filteredPosts;
+            if (filterType === 'all' || !filterType) {
+                filteredPosts = posts[month];
+            } else {
+                filteredPosts = posts[month].filter(post => post.type === filterType);
+            }
 
             filteredPosts.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(post => {
                 const postElement = document.createElement('div');
@@ -253,12 +259,20 @@
                 const minimizeButton = document.createElement('button');
                 minimizeButton.classList.add('minimize-btn');
                 minimizeButton.innerText = '-';
-                minimizeButton.onclick = () => togglePostVisibility(postElement);
+                minimizeButton.onclick = () => {
+                    if (post.type === "image") {
+                        togglePostVisibility(postElement);
+                    }
+                };
 
                 const titleElement = document.createElement('h2');
                 titleElement.classList.add('post-title');
                 titleElement.innerText = post.title;
-                titleElement.onclick = () => togglePostVisibility(postElement);
+                titleElement.onclick = () => {
+                    if (post.type === "image") {
+                        togglePostVisibility(postElement);
+                    }
+                };
 
                 const dateElement = document.createElement('p');
                 dateElement.classList.add('post-date');
@@ -266,7 +280,11 @@
 
                 const mediaElement = document.createElement(post.type === "video" ? 'video' : 'img');
                 mediaElement.src = post.src;
-                mediaElement.onclick = () => togglePostVisibility(postElement);
+                mediaElement.onclick = () => {
+                    if (post.type === "image") {
+                        togglePostVisibility(postElement);
+                    }
+                };
 
                 if (post.type === 'video') {
                     mediaElement.controls = true;
@@ -289,12 +307,11 @@
         }
 
         function sortPosts(type) {
-            showPosts(activeMonth, type);  // Use the active month
+            showPosts(activeMonth, type);  // Use the active month and filter by type
         }
 
         function showMuseum() {
-            activeMonth = 'museum';
-            showPosts('museum');
+            setActiveMonth('museum');
         }
 
         // Show November posts on initial load
