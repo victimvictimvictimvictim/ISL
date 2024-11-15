@@ -3,23 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal CSS Subtab</title>
+    <title>ISL ARCHIVE</title>
     <link rel="stylesheet" href="https://unpkg.com/terminal.css@0.7.4/dist/terminal.min.css">
+    <style>
+        /* Body style to use flex layout */
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 250px;
+            background-color: #2c2f36;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        .sidebar h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .month {
+            font-size: 1.2rem;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .month:hover {
+            color: #ffcc00;
+        }
+
+        /* Content window styles */
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #1c1f22;
+            color: white;
+        }
+
+        /* Terminal Bar */
+        .terminal-bar {
+            background-color: #333;
+            display: flex;
+            justify-content: flex-start;
+            padding: 5px;
+        }
+
+        .terminal-icon {
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            border-radius: 50%;
+        }
+
+        .terminal-red { background-color: red; }
+        .terminal-yellow { background-color: yellow; }
+        .terminal-green { background-color: green; }
+
+        /* Terminal Window */
+        .terminal-window {
+            background-color: #111;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .btn {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #ffcc00;
+        }
+    </style>
 </head>
 <body class="terminal-dark">
-    <div class="terminal">
-        <!-- Terminal Bar -->
-        <div class="terminal-bar">
-            <span class="terminal-icon terminal-red"></span>
-            <span class="terminal-icon terminal-yellow"></span>
-            <span class="terminal-icon terminal-green"></span>
-        </div>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>ISL ARCHIVE</h2>
+        <div class="month">DEC24</div>
+        <div class="month">NOV24</div>
+    </div>
 
-        <!-- Terminal Window -->
-        <div class="terminal-window">
-            <h1>Welcome to the Terminal CSS Subtab</h1>
-            <p>This subtab is styled with Terminal CSS for a retro look!</p>
-            <button onclick="window.location.href='index.html'" class="btn">Back to Home</button>
+    <!-- Content Area -->
+    <div class="content">
+        <div class="terminal">
+            <!-- Terminal Bar -->
+            <div class="terminal-bar">
+                <span class="terminal-icon terminal-red"></span>
+                <span class="terminal-icon terminal-yellow"></span>
+                <span class="terminal-icon terminal-green"></span>
+            </div>
+
+            <!-- Terminal Window -->
+            <div class="terminal-window">
+                <h1>Welcome to the Terminal CSS Subtab</h1>
+                <p>This subtab is styled with Terminal CSS for a retro look!</p>
+                <button onclick="window.location.href='index.html'" class="btn">Back to Home</button>
+            </div>
         </div>
     </div>
 </body>
