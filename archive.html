@@ -174,7 +174,7 @@
         <h2>ISL ARCHIVE</h2>
         <div class="month" onclick="setActiveMonth('december')">DEC24</div>
         <div class="month" onclick="setActiveMonth('november')">NOV24</div>
-        <div class="museum-tab" onclick="showMuseum()">Museum</div>
+        <div class="month" onclick="setActiveMonth('museum')">Museum</div> <!-- Treating Museum as a month -->
     </div>
 
     <div class="content">
@@ -230,12 +230,7 @@
             activeMonth = month;  // Set active month
             document.querySelectorAll('.month').forEach(m => m.classList.remove('active'));
             document.querySelector(`.month[onclick="setActiveMonth('${month}')"]`).classList.add('active');
-            
-            if (month === 'museum') {
-                showPosts(month);  // Show museum posts directly
-            } else {
-                showPosts(month, currentSortType);  // Apply sort if not museum
-            }
+            showPosts(month, currentSortType);  // Show posts based on active month and current sort
         }
 
         function showPosts(month, filterType = null) {
@@ -243,9 +238,7 @@
             postsContainer.innerHTML = ''; // Clear previous posts
 
             let filteredPosts;
-            if (month === 'museum') {
-                filteredPosts = posts.museum;  // Always show museum posts for the museum tab
-            } else if (filterType === 'all' || !filterType) {
+            if (filterType === 'all' || !filterType) {
                 filteredPosts = posts[month];
             } else {
                 filteredPosts = posts[month].filter(post => post.type === filterType);
@@ -301,14 +294,17 @@
             });
         }
 
+        function togglePostVisibility(postElement) {
+            postElement.classList.toggle('minimized');
+        }
+
         function sortPosts(type) {
             currentSortType = type;  // Store the selected sort type
             showPosts(activeMonth, type);  // Use the active month and filter by type
         }
 
-        function togglePostVisibility(postElement) {
-            postElement.classList.toggle('minimized');
-        }
+        // Show November posts on initial load
+        setActiveMonth('november');
     </script>
 </body>
 </html>
