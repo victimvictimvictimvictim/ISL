@@ -178,12 +178,24 @@
         }
 
         .song-title {
-            margin-top: 10px; /* Adjust space between the slider and title */
-            font-size: 1rem; /* Adjusted smaller font size */
-            color: #fff;
+            margin-top: 10px; /* Space between the slider and the title */
+            font-size: 0.8rem; /* Smaller font size to fit the sidebar */
+            color: #39ff14; /* Neon green */
             font-family: "Courier New", Courier, monospace; /* Terminal-style font */
             white-space: nowrap;
+            animation: scrollText 10s linear infinite; /* Animation for moving text */
         }
+
+        /* Keyframes for the terminal text animation */
+        @keyframes scrollText {
+            0% {
+                transform: translateX(100%); /* Start position: off the right */
+            }
+            100% {
+                transform: translateX(-100%); /* End position: off the left */
+            }
+        }
+
 
     </style>
 </head>
