@@ -95,8 +95,9 @@
         }
 
         .post img, .post video {
-            max-width: 100%;
+            max-width: 100%; /* Make the image/video fit within the container */
             border-radius: 5px;
+            height: auto; /* Ensure proper aspect ratio */
         }
 
         .post-title {
@@ -153,21 +154,21 @@
         const posts = {
             november: [
                 {
-                    title: "NL_FA",
+                    title: "Post 1",
                     date: "2024-11-15",
                     type: "image",
                     src: "icl.png",  // Example image source
                 },
                 {
-                    title: "ISL Digest Week#1",
+                    title: "Video Post",
                     date: "2024-11-14",
                     type: "video",
-                    src: "ISL_DIGETS.mp4",  // Example video source
+                    src: "ISL_DIGEST.mp4",  // Example video source
                 }
             ],
             december: [
                 {
-                    title: "NOTHING HERE YET! MAYBE SMD?",
+                    title: "Post 2",
                     date: "2024-12-05",
                     type: "image",
                     src: "image2.jpg",  // Example image source
@@ -203,8 +204,11 @@
 
                 const mediaElement = document.createElement(post.type === "video" ? 'video' : 'img');
                 mediaElement.src = post.src;
+
                 if (post.type === 'video') {
-                    mediaElement.controls = true;
+                    mediaElement.controls = true; // Add controls for video
+                    mediaElement.width = 400; // Set a fixed width for the video if necessary
+                    mediaElement.height = 225; // Optional: Adjust the height to maintain aspect ratio
                 }
 
                 postElement.appendChild(titleElement);
