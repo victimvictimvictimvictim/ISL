@@ -16,9 +16,19 @@
             max-width: 100%;
             height: auto;
         }
+        audio {
+            display: none; /* This hides the audio player from view */
+        }
     </style>
 </head>
 <body>
+    <!-- Image -->
     <img src="66.png" alt="A description of the image">
+
+    <!-- Audio Player -->
+    <audio autoplay loop>
+        <source src="ost.ogg" type="audio/ogg">
+        Your browser does not support the audio element.
+    </audio>
 </body>
 </html>
