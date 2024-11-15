@@ -177,6 +177,13 @@
             width: 100%;
             margin-top: 10px;
         }
+
+        .terminal-song-title {
+            font-family: 'Courier New', monospace;
+            color: #00ff00; /* Green color to mimic terminal style */
+            font-size: 1.2rem;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body class="terminal-dark">
@@ -194,6 +201,9 @@
             <label for="audioVolume">Volume:</label>
             <input type="range" id="audioVolume" class="audio-slider" value="100" max="100" onchange="setVolume(this.value)">
         </div>
+
+        <!-- Terminal-style Song Title -->
+        <div id="current-song-title" class="terminal-song-title">Now Playing: </div>
     </div>
 
     <div class="content">
@@ -255,137 +265,67 @@
 
         function showPosts(month, filterType = null) {
             const postsContainer = document.getElementById('posts');
-            postsContainer.innerHTML = '';
+            postsContainer.innerHTML = '';  
 
-            let filteredPosts;
-            if (filterType === 'all' || !filterType) {
-                filteredPosts = posts[month];
-            } else {
-                filteredPosts = posts[month].filter(post => post.type === filterType);
-            }
+            const filteredPosts = filterType ? posts[month].filter(post => post.type === filterType) : posts[month];
 
-            filteredPosts.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(post => {
+            filteredPosts.forEach(post => {
                 const postElement = document.createElement('div');
                 postElement.classList.add('post');
-
-                const minimizeButton = document.createElement('button');
-                minimizeButton.classList.add('minimize-btn');
-                minimizeButton.innerText = '-';
-                minimizeButton.onclick = () => {
-                    togglePostVisibility(postElement);
-                };
-
-                const titleElement = document.createElement('h3');
-                titleElement.classList.add('post-title');
-                titleElement.innerText = post.title;
-                titleElement.onclick = () => {
-                    togglePostVisibility(postElement);
-                };
-
-                const dateElement = document.createElement('p');
-                dateElement.classList.add('post-date');
-                dateElement.innerText = `Posted on: ${post.date}`;
-
-                const mediaElement = document.createElement(post.type === "video" ? 'video' : 'img');
-                mediaElement.src = post.src;
-                mediaElement.onclick = () => {
-                    if (post.type === "image") {
-                        togglePostVisibility(postElement);
-                    }
-                };
-
-                if (post.type === 'video') {
-                    mediaElement.controls = true;
-                }
-
-                const contentDiv = document.createElement('div');
-                contentDiv.classList.add('post-content');
-                contentDiv.appendChild(dateElement);
-                contentDiv.appendChild(mediaElement);
-
-                postElement.appendChild(minimizeButton);
-                postElement.appendChild(titleElement);
-                postElement.appendChild(contentDiv);
+                postElement.innerHTML = `
+                    <div class="post-title">${post.title}</div>
+                    <div class="post-date">${post.date}</div>
+                    ${post.type === 'image' ? `<img src="${post.src}" alt="${post.title}">` : ''}
+                    ${post.type === 'video' ? `<video controls><source src="${post.src}" type="video/mp4"></video>` : ''}
+                    <button onclick="minimizePost(this)">Minimize</button>
+                `;
                 postsContainer.appendChild(postElement);
             });
         }
 
-        function togglePostVisibility(postElement) {
-            postElement.classList.toggle('minimized');
+        function minimizePost(button) {
+            const postContent = button.parentElement;
+            postContent.classList.toggle('minimized');
         }
 
         function sortPosts(type) {
             currentSortType = type;
-            showPosts(activeMonth, type);
+            showPosts(activeMonth, type);  
         }
-
-        // Declare audio globally so it can be used across different functions
-       
 
         function playRandomMP3() {
-            const mp3Files = [
-                '/audio/E1 (3x3) - Without E1 (Official Video) #ALG.mp3',
-                '/audio/Lilniina - cigirl (Official Music Video).mp3',
-                '/audio/Lilniina - e-m@il (Official Music Video).mp3',
-                '/audio/Molly Santana - What Did I Do Today？ (Official Video).mp3',
-                '/audio/Nettspend - F＊CK SWAG (Official Music Video).mp3',
-                '/audio/Nettspend - Just A Teen (Music Video).mp3',
-                '/audio/SHED THEORY - BEAVER.mp3'
-            ];
-
-            // Choose a random file from the list
-            const randomFile = mp3Files[Math.floor(Math.random() * mp3Files.length)];
-            console.log("Playing file:", randomFile);  // Log to see which file is being selected
-
-            // If there is an existing audio object, pause and reset it before playing the new one
-            if (audio) {
-                audio.pause();  // Pause the current audio if any
-                audio.currentTime = 0;  // Reset time to the beginning
-            }
-
-            // Create a new audio object and play the selected random file
-            audio = new Audio(randomFile);
-            audio.play().catch(error => {
-                console.error("Error playing audio:", error);  // Log any errors when trying to play the audio
-            });
-
-            // Display the title of the currently playing song
-            document.getElementById('current-song-title').innerText = `Now Playing: ${randomFile.split('/').pop()}`;
-
-            // When the song finishes, play the next one
-            audio.onended = function() {
-                playRandomMP3();  // Call playRandomMP3 recursively to play the next song
-            };
-
-            // Show the pause and skip buttons
-            document.getElementById('pauseButton').style.display = 'inline';
-            document.getElementById('skipButton').style.display = 'inline';
+            // Example: Play a random MP3 file
+            audio = new Audio('path/to/random/mp3/file.mp3');
+            audio.play();
+            document.getElementById('current-song-title').textContent = 'Now Playing: Random MP3';
         }
 
-        // Pause audio function
         function pauseAudio() {
             if (audio) {
                 audio.pause();
+                document.getElementById('current-song-title').textContent = 'Audio Paused';
             }
         }
 
-        // Skip audio function (Stop and reset)
         function skipAudio() {
             if (audio) {
                 audio.pause();
                 audio.currentTime = 0;
+                audio.play();
+                document.getElementById('current-song-title').textContent = 'Now Playing: Skipped to Start';
             }
         }
 
-        // Set volume based on slider input
-        function setVolume(value) {
+        function setVolume(volume) {
             if (audio) {
-                audio.volume = value / 100;  // Set volume based on slider value (range 0-1)
+                audio.volume = volume / 100;  
             }
         }
 
-
-        setActiveMonth('november');
+        // Load the default posts on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            showPosts('november');
+        });
     </script>
 </body>
 </html>
