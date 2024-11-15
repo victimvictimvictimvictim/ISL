@@ -28,13 +28,13 @@
             margin-bottom: 20px;
         }
 
-        .month, .museum-tab {
+        .month, .museum-tab, .play-random-mp3-btn {
             font-size: 1.2rem;
             margin: 10px 0;
             cursor: pointer;
         }
 
-        .month:hover, .museum-tab:hover {
+        .month:hover, .museum-tab:hover, .play-random-mp3-btn:hover {
             color: #ffcc00;
         }
 
@@ -135,7 +135,7 @@
             display: none;
         }
 
-        .sidebar .month, .sidebar .museum-tab {
+        .sidebar .month, .sidebar .museum-tab, .sidebar .play-random-mp3-btn {
             margin-bottom: 15px;
         }
 
@@ -174,7 +174,8 @@
         <h2>ISL ARCHIVE</h2>
         <div class="month" onclick="setActiveMonth('december')">DEC24</div>
         <div class="month" onclick="setActiveMonth('november')">NOV24</div>
-        <div class="month" onclick="setActiveMonth('museum')">Museum</div> <!-- Treating Museum as a month -->
+        <div class="month" onclick="setActiveMonth('museum')">Museum</div>
+        <div class="play-random-mp3-btn" onclick="playRandomMP3()">Play Random MP3</div> <!-- New Button -->
     </div>
 
     <div class="content">
@@ -252,19 +253,12 @@
                 minimizeButton.classList.add('minimize-btn');
                 minimizeButton.innerText = '-';
                 minimizeButton.onclick = () => {
-                    if (post.type === "image") {
-                        togglePostVisibility(postElement);
-                    }
+                    togglePostVisibility(postElement);
                 };
 
-                const titleElement = document.createElement('h2');
+                const titleElement = document.createElement('h3');
                 titleElement.classList.add('post-title');
                 titleElement.innerText = post.title;
-                titleElement.onclick = () => {
-                    if (post.type === "image") {
-                        togglePostVisibility(postElement);
-                    }
-                };
 
                 const dateElement = document.createElement('p');
                 dateElement.classList.add('post-date');
@@ -301,6 +295,17 @@
         function sortPosts(type) {
             currentSortType = type;  // Store the selected sort type
             showPosts(activeMonth, type);  // Use the active month and filter by type
+        }
+
+        // Function to play a random MP3 file
+        function playRandomMP3() {
+            const mp3Files = [
+                'audio1.mp3', 'audio2.mp3', 'audio3.mp3' // Add your MP3 file names here
+            ];
+
+            const randomFile = mp3Files[Math.floor(Math.random() * mp3Files.length)];
+            const audio = new Audio(randomFile);
+            audio.play();
         }
 
         // Show November posts on initial load
