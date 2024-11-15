@@ -92,13 +92,13 @@
             padding: 15px;
             margin-bottom: 10px;
             border-radius: 5px;
+            position: relative;
         }
 
         .post img, .post video {
-            max-width: 100%; /* Make the image/video fit within the container */
-            height: auto; /* Ensure proper aspect ratio */
-            max-height: 400px; /* Limit the image height */
-            object-fit: cover; /* Ensure image doesn't stretch and maintains aspect ratio */
+            max-width: 100%; /* Ensure the image/video fits within the container */
+            height: auto; /* Preserve aspect ratio */
+            object-fit: cover; /* Prevent stretching */
             border-radius: 5px;
         }
 
@@ -117,13 +117,29 @@
             flex-direction: column;
             gap: 15px;
         }
+
+        /* Minimize Button Styling */
+        .minimize-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .minimized .post-content {
+            display: none;
+        }
     </style>
 </head>
 <body class="terminal-dark">
     <!-- Sidebar -->
     <div class="sidebar">
         <h2>ISL ARCHIVE</h2>
-        <div class="month" onclick="showPosts('november')">DEC24</div>
+        <div class="month" onclick="showPosts('december')">DEC24</div>
         <div class="month" onclick="showPosts('november')">NOV24</div>
     </div>
 
@@ -195,7 +211,13 @@
             sortedPosts.forEach(post => {
                 const postElement = document.createElement('div');
                 postElement.classList.add('post');
-                
+
+                // Create minimize button
+                const minimizeButton = document.createElement('button');
+                minimizeButton.classList.add('minimize-btn');
+                minimizeButton.innerText = '-';
+                minimizeButton.onclick = () => togglePostVisibility(postElement);
+
                 const titleElement = document.createElement('h2');
                 titleElement.classList.add('post-title');
                 titleElement.innerText = post.title;
@@ -213,12 +235,22 @@
                     mediaElement.height = 225; // Optional: Adjust the height to maintain aspect ratio
                 }
 
-                postElement.appendChild(titleElement);
-                postElement.appendChild(dateElement);
-                postElement.appendChild(mediaElement);
+                // Create a div for the content (to minimize)
+                const contentDiv = document.createElement('div');
+                contentDiv.classList.add('post-content');
+                contentDiv.appendChild(dateElement);
+                contentDiv.appendChild(mediaElement);
 
+                postElement.appendChild(minimizeButton);
+                postElement.appendChild(titleElement);
+                postElement.appendChild(contentDiv);
                 postsContainer.appendChild(postElement);
             });
+        }
+
+        // Function to toggle the visibility of the post content
+        function togglePostVisibility(postElement) {
+            postElement.classList.toggle('minimized');
         }
     </script>
 </body>
