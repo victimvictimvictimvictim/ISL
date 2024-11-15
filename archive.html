@@ -184,6 +184,23 @@
             font-size: 1.2rem;
             margin-top: 15px;
         }
+
+        /* Styling for song list */
+        .song-list {
+            margin-top: 20px;
+        }
+
+        .song-item {
+            background-color: #444;
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .song-item:hover {
+            background-color: #666;
+        }
     </style>
 </head>
 <body class="terminal-dark">
@@ -204,6 +221,9 @@
 
         <!-- Terminal-style Song Title -->
         <div id="current-song-title" class="terminal-song-title">Now Playing: </div>
+
+        <!-- Song List -->
+        <div class="song-list" id="songList"></div>
     </div>
 
     <div class="content">
@@ -252,22 +272,26 @@
             ],
             museum: [
                 { title: "tacobellguy", date: "2024-11-13", type: "video", src: "tacobellguy.mp4" },
-                { title: "Soybomberhelloween", date: "2024-11-12", type: "video", src: "Soybomberhelloween.mp4" }
+                { title: "Soybomberhelloween", date: "2024-10-31", type: "image", src: "soybomberhelloween.jpg" }
             ]
         };
 
+        const songs = [
+            { title: "Song 1", file: "song1.mp3" },
+            { title: "Song 2", file: "song2.mp3" },
+            { title: "Song 3", file: "song3.mp3" }
+        ];
+
         function setActiveMonth(month) {
-            activeMonth = month;  
-            document.querySelectorAll('.month').forEach(m => m.classList.remove('active'));
-            document.querySelector(`.month[onclick="setActiveMonth('${month}')"]`).classList.add('active');
-            showPosts(month, currentSortType);  
+            activeMonth = month;
+            showPosts(month);
         }
 
-        function showPosts(month, filterType = null) {
+        function showPosts(month) {
             const postsContainer = document.getElementById('posts');
             postsContainer.innerHTML = '';  
 
-            const filteredPosts = filterType ? posts[month].filter(post => post.type === filterType) : posts[month];
+            const filteredPosts = currentSortType ? posts[month].filter(post => post.type === currentSortType) : posts[month];
 
             filteredPosts.forEach(post => {
                 const postElement = document.createElement('div');
@@ -281,6 +305,7 @@
                 `;
                 postsContainer.appendChild(postElement);
             });
+            displaySongs();  // Display the song list
         }
 
         function minimizePost(button) {
@@ -293,11 +318,25 @@
             showPosts(activeMonth, type);  
         }
 
-        function playRandomMP3() {
-            // Example: Play a random MP3 file
-            audio = new Audio('path/to/random/mp3/file.mp3');
+        function displaySongs() {
+            const songListContainer = document.getElementById('songList');
+            songListContainer.innerHTML = ''; // Clear previous songs
+            songs.forEach(song => {
+                const songElement = document.createElement('div');
+                songElement.classList.add('song-item');
+                songElement.textContent = song.title;
+                songElement.onclick = () => playSong(song);
+                songListContainer.appendChild(songElement);
+            });
+        }
+
+        function playSong(song) {
+            if (audio) {
+                audio.pause(); // Pause the current audio
+            }
+            audio = new Audio(song.file);
             audio.play();
-            document.getElementById('current-song-title').textContent = 'Now Playing: Random MP3';
+            document.getElementById('current-song-title').textContent = `Now Playing: ${song.title}`;
         }
 
         function pauseAudio() {
