@@ -178,28 +178,10 @@
             margin-top: 10px;
         }
 
-        .terminal-song-title {
-            font-family: 'Courier New', monospace;
-            color: #00ff00; /* Green color to mimic terminal style */
-            font-size: 1.2rem;
-            margin-top: 15px;
-        }
-
-        /* Styling for song list */
-        .song-list {
+        .song-title {
             margin-top: 20px;
-        }
-
-        .song-item {
-            background-color: #444;
-            padding: 10px;
-            margin: 5px 0;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .song-item:hover {
-            background-color: #666;
+            font-size: 1.2rem;
+            color: #fff;
         }
     </style>
 </head>
@@ -218,12 +200,6 @@
             <label for="audioVolume">Volume:</label>
             <input type="range" id="audioVolume" class="audio-slider" value="100" max="100" onchange="setVolume(this.value)">
         </div>
-
-        <!-- Terminal-style Song Title -->
-        <div id="current-song-title" class="terminal-song-title">Now Playing: </div>
-
-        <!-- Song List -->
-        <div class="song-list" id="songList"></div>
     </div>
 
     <div class="content">
@@ -254,6 +230,8 @@
                 <div id="posts" class="month-posts"></div>
             </div>
         </div>
+
+        <div id="current-song-title" class="song-title"></div>
     </div>
 
     <script>
@@ -272,13 +250,79 @@
             ],
             museum: [
                 { title: "tacobellguy", date: "2024-11-13", type: "video", src: "tacobellguy.mp4" },
-                { title: "Soybomberhelloween", date: "2024-10-31", type: "image", src: "soybomberhelloween.jpg" }
+                { title: "Soybomberhelloween", date: "2024-11-12", type: "video", src: "Soybomberhelloween.mp4" }
             ]
         };
 
-        // Reintroducing the mp3 files
+        function setActiveMonth(month) {
+            activeMonth = month;  
+            document.querySelectorAll('.month').forEach(m => m.classList.remove('active'));
+            document.querySelector(`.month[onclick="setActiveMonth('${month}')"]`).classList.add('active');
+            showPosts(month, currentSortType);  
+        }
+
+        function showPosts(month, filterType = null) {
+            const postsContainer = document.getElementById('posts');
+            postsContainer.innerHTML = '';
+
+            let filteredPosts;
+            if (filterType === 'all' || !filterType) {
+                filteredPosts = posts[month];
+            } else {
+                filteredPosts = posts[month].filter(post => post.type === filterType);
+            }
+
+            filteredPosts.sort((a, b) => new Date(b.date) - new Date(a.date));  
+
+            filteredPosts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+                postElement.classList.add(post.type);
+
+                const minimizeButton = document.createElement('button');
+                minimizeButton.classList.add('minimize-btn');
+                minimizeButton.innerHTML = '-';
+                minimizeButton.onclick = function () {
+                    postElement.classList.toggle('minimized');
+                };
+                postElement.appendChild(minimizeButton);
+
+                const title = document.createElement('div');
+                title.classList.add('post-title');
+                title.textContent = post.title;
+                postElement.appendChild(title);
+
+                const date = document.createElement('div');
+                date.classList.add('post-date');
+                date.textContent = post.date;
+                postElement.appendChild(date);
+
+                const content = document.createElement('div');
+                content.classList.add('post-content');
+
+                if (post.type === 'image') {
+                    const img = document.createElement('img');
+                    img.src = post.src;
+                    content.appendChild(img);
+                } else if (post.type === 'video') {
+                    const video = document.createElement('video');
+                    video.src = post.src;
+                    video.controls = true;
+                    content.appendChild(video);
+                }
+
+                postElement.appendChild(content);
+                postsContainer.appendChild(postElement);
+            });
+        }
+
+        function sortPosts(type) {
+            currentSortType = type;
+            showPosts(activeMonth, type);
+        }
+
         const mp3Files = [
-            '/audio/E1 (3x3) - Without E1 (Official Video) #ALG.mp3',
+            '/audio/e13x3-without.mp3',
             '/audio/Lilniina - cigirl (Official Music Video).mp3',
             '/audio/Lilniina - e-m@il (Official Music Video).mp3',
             '/audio/Molly Santana - What Did I Do Today？ (Official Video).mp3',
@@ -287,90 +331,41 @@
             '/audio/SHED THEORY - BEAVER.mp3'
         ];
 
-        function setActiveMonth(month) {
-            activeMonth = month;
-            showPosts(month);
-        }
+        let currentSongIndex = 0;
 
-        function showPosts(month) {
-            const postsContainer = document.getElementById('posts');
-            postsContainer.innerHTML = '';  
-
-            const filteredPosts = currentSortType ? posts[month].filter(post => post.type === currentSortType) : posts[month];
-
-            filteredPosts.forEach(post => {
-                const postElement = document.createElement('div');
-                postElement.classList.add('post');
-                postElement.innerHTML = `
-                    <div class="post-title">${post.title}</div>
-                    <div class="post-date">${post.date}</div>
-                    ${post.type === 'image' ? `<img src="${post.src}" alt="${post.title}">` : ''}
-                    ${post.type === 'video' ? `<video controls><source src="${post.src}" type="video/mp4"></video>` : ''}
-                    <button onclick="minimizePost(this)">Minimize</button>
-                `;
-                postsContainer.appendChild(postElement);
-            });
-
-            displaySongs();  // Display the song list
-        }
-
-        function minimizePost(button) {
-            const postContent = button.parentElement;
-            postContent.classList.toggle('minimized');
-        }
-
-        function sortPosts(type) {
-            currentSortType = type;
-            showPosts(activeMonth);  
-        }
-
-        function displaySongs() {
-            const songListContainer = document.getElementById('songList');
-            songListContainer.innerHTML = ''; // Clear previous songs
-            mp3Files.forEach(file => {
-                const songElement = document.createElement('div');
-                songElement.classList.add('song-item');
-                songElement.textContent = file.split('/').pop().replace('.mp3', '');  // Extract the file name without extension
-                songElement.onclick = () => playSong(file);
-                songListContainer.appendChild(songElement);
-            });
-        }
-
-        function playSong(songFile) {
-            if (audio) {
-                audio.pause(); // Pause the current audio
+        function playRandomMP3() {
+            if (!audio) {
+                audio = new Audio(mp3Files[currentSongIndex]);
+            } else {
+                audio.src = mp3Files[currentSongIndex];
             }
-            audio = new Audio(songFile);
+
             audio.play();
-            document.getElementById('current-song-title').textContent = `Now Playing: ${songFile.split('/').pop().replace('.mp3', '')}`;
+            document.getElementById('current-song-title').textContent = `Now Playing: ${mp3Files[currentSongIndex].split('/').pop()}`;
         }
 
         function pauseAudio() {
             if (audio) {
                 audio.pause();
-                document.getElementById('current-song-title').textContent = 'Audio Paused';
             }
         }
 
         function skipAudio() {
             if (audio) {
-                audio.pause();
-                audio.currentTime = 0;
-                audio.play();
-                document.getElementById('current-song-title').textContent = 'Now Playing: Skipped to Start';
+                currentSongIndex = (currentSongIndex + 1) % mp3Files.length;
+                playRandomMP3();
             }
         }
 
         function setVolume(volume) {
             if (audio) {
-                audio.volume = volume / 100;  
+                audio.volume = volume / 100;
             }
         }
 
-        // Load the default posts on page load
-        document.addEventListener('DOMContentLoaded', function () {
-            showPosts('november');
-        });
+        window.onload = function() {
+            setActiveMonth('november');
+        };
     </script>
 </body>
 </html>
