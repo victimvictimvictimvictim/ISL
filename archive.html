@@ -246,7 +246,9 @@
             postsContainer.innerHTML = ''; // Clear previous posts
 
             let filteredPosts;
-            if (filterType === 'all' || !filterType) {
+            if (month === 'museum') {
+                filteredPosts = posts.museum;  // Always show museum posts for the museum tab
+            } else if (filterType === 'all' || !filterType) {
                 filteredPosts = posts[month];
             } else {
                 filteredPosts = posts[month].filter(post => post.type === filterType);
