@@ -261,20 +261,12 @@
                 const minimizeButton = document.createElement('button');
                 minimizeButton.classList.add('minimize-btn');
                 minimizeButton.innerText = '-';
-                minimizeButton.onclick = () => {
-                    if (post.type === "image") {
-                        togglePostVisibility(postElement);
-                    }
-                };
+                minimizeButton.onclick = () => togglePostVisibility(postElement);
 
                 const titleElement = document.createElement('h2');
                 titleElement.classList.add('post-title');
                 titleElement.innerText = post.title;
-                titleElement.onclick = () => {
-                    if (post.type === "image") {
-                        togglePostVisibility(postElement);
-                    }
-                };
+                titleElement.onclick = () => togglePostVisibility(postElement);
 
                 const dateElement = document.createElement('p');
                 dateElement.classList.add('post-date');
@@ -282,11 +274,7 @@
 
                 const mediaElement = document.createElement(post.type === "video" ? 'video' : 'img');
                 mediaElement.src = post.src;
-                mediaElement.onclick = () => {
-                    if (post.type === "image") {
-                        togglePostVisibility(postElement);
-                    }
-                };
+                mediaElement.onclick = () => togglePostVisibility(postElement);
 
                 if (post.type === 'video') {
                     mediaElement.controls = true;
@@ -312,6 +300,7 @@
             showPosts(activeMonth, type);  // Use the active month and filter by type
         }
 
+        // Event listener for the Museum tab
         document.getElementById('museum-tab').addEventListener('click', () => {
             setActiveMonth('museum');
         });
