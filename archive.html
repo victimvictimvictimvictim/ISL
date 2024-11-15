@@ -170,6 +170,9 @@
 
         .audio-controls {
             margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
         .audio-slider {
@@ -184,6 +187,8 @@
             font-family: "Courier New", Courier, monospace; /* Terminal-style font */
             white-space: nowrap;
             animation: scrollText 10s linear infinite; /* Animation for moving text */
+            overflow: hidden; /* Prevent overflow */
+            text-overflow: ellipsis; /* Adds ellipsis when text overflows */
         }
 
         /* Keyframes for the terminal text animation */
@@ -195,6 +200,7 @@
                 transform: translateX(-100%); /* End position: off the left */
             }
         }
+
 
 
     </style>
