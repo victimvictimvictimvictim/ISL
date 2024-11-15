@@ -319,7 +319,8 @@
             showPosts(activeMonth, type);
         }
 
-        let audio;  // Declare audio variable outside the function to retain the reference
+        // Declare audio globally so it can be used across different functions
+       
 
         function playRandomMP3() {
             const mp3Files = [
@@ -332,10 +333,17 @@
                 '/audio/SHED THEORY - BEAVER.mp3'
             ];
 
+            // Choose a random file from the list
             const randomFile = mp3Files[Math.floor(Math.random() * mp3Files.length)];
             console.log("Playing file:", randomFile);  // Log to see which file is being selected
 
-            // Create the audio element and play the selected file
+            // If there is an existing audio object, pause and reset it before playing the new one
+            if (audio) {
+                audio.pause();  // Pause the current audio if any
+                audio.currentTime = 0;  // Reset time to the beginning
+            }
+
+            // Create a new audio object and play the selected random file
             audio = new Audio(randomFile);
             audio.play().catch(error => {
                 console.error("Error playing audio:", error);  // Log any errors when trying to play the audio
@@ -349,7 +357,7 @@
                 playRandomMP3();  // Call playRandomMP3 recursively to play the next song
             };
 
-            // Update button and volume slider visibility
+            // Show the pause and skip buttons
             document.getElementById('pauseButton').style.display = 'inline';
             document.getElementById('skipButton').style.display = 'inline';
         }
@@ -372,7 +380,7 @@
         // Set volume based on slider input
         function setVolume(value) {
             if (audio) {
-                audio.volume = value / 100;
+                audio.volume = value / 100;  // Set volume based on slider value (range 0-1)
             }
         }
 
