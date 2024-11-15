@@ -199,7 +199,10 @@
             <button onclick="skipAudio()" id="skipButton" class="btn">Skip</button>
             <label for="audioVolume">Volume:</label>
             <input type="range" id="audioVolume" class="audio-slider" value="100" max="100" onchange="setVolume(this.value)">
+            <!-- Move the Now Playing title here -->
+            <div id="current-song-title" class="song-title"></div>
         </div>
+        
     </div>
 
     <div class="content">
