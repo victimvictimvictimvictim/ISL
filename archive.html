@@ -185,7 +185,7 @@
         <div class="month" onclick="setActiveMonth('december')">DEC24</div>
         <div class="month" onclick="setActiveMonth('november')">NOV24</div>
         <div class="month" onclick="setActiveMonth('museum')">Museum</div>
-        <div class="play-random-mp3-btn" onclick="playRandomMP3()">Play Random MP3</div>
+        <div class="play-random-mp3-btn" onclick="playRandomMP3()">ISL RADIO</div>
 
         <!-- Audio controls added below -->
         <div class="audio-controls">
@@ -319,27 +319,37 @@
             showPosts(activeMonth, type);
         }
 
+        let audio;  // Declare audio variable outside the function to retain the reference
+
         function playRandomMP3() {
             const mp3Files = [
-            '/audio/E1 (3x3) - Without E1 (Official Video) #ALG.mp3',
-            '/audio/Lilniina - cigirl (Official Music Video).mp3',
-            '/audio/Lilniina - e-m@il (Official Music Video).mp3',
-            '/audio/Molly Santana - What Did I Do Today？ (Official Video).mp3',
-            '/audio/Nettspend - F＊CK SWAG (Official Music Video).mp3',
-            '/audio/Nettspend - Just A Teen (Music Video).mp3',
-            '/audio/SHED THEORY - BEAVER.mp3'
+                '/audio/E1 (3x3) - Without E1 (Official Video) #ALG.mp3',
+                '/audio/Lilniina - cigirl (Official Music Video).mp3',
+                '/audio/Lilniina - e-m@il (Official Music Video).mp3',
+                '/audio/Molly Santana - What Did I Do Today？ (Official Video).mp3',
+                '/audio/Nettspend - F＊CK SWAG (Official Music Video).mp3',
+                '/audio/Nettspend - Just A Teen (Music Video).mp3',
+                '/audio/SHED THEORY - BEAVER.mp3'
             ];
-
 
             const randomFile = mp3Files[Math.floor(Math.random() * mp3Files.length)];
             console.log("Playing file:", randomFile);  // Log to see which file is being selected
 
+            // Create the audio element and play the selected file
             audio = new Audio(randomFile);
             audio.play().catch(error => {
                 console.error("Error playing audio:", error);  // Log any errors when trying to play the audio
             });
 
-            // Update button and volume slider
+            // Display the title of the currently playing song
+            document.getElementById('current-song-title').innerText = `Now Playing: ${randomFile.split('/').pop()}`;
+
+            // When the song finishes, play the next one
+            audio.onended = function() {
+                playRandomMP3();  // Call playRandomMP3 recursively to play the next song
+            };
+
+            // Update button and volume slider visibility
             document.getElementById('pauseButton').style.display = 'inline';
             document.getElementById('skipButton').style.display = 'inline';
         }
@@ -365,6 +375,7 @@
                 audio.volume = value / 100;
             }
         }
+
 
         setActiveMonth('november');
     </script>
