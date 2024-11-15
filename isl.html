@@ -30,13 +30,13 @@
             margin-bottom: 20px;
         }
 
-        .month {
+        .month, .museum-tab {
             font-size: 1.2rem;
             margin: 10px 0;
             cursor: pointer;
         }
 
-        .month:hover {
+        .month:hover, .museum-tab:hover {
             color: #ffcc00;
         }
 
@@ -121,17 +121,23 @@
         /* Minimize Button Styling */
         .minimize-btn {
             position: absolute;
-            top: 10px;
+            top: 5px;
             right: 10px;
             background-color: transparent;
             color: white;
             border: none;
-            font-size: 1.2rem;
+            font-size: 1.8rem; /* Increased font size */
+            padding: 5px; /* Added padding to make the button larger */
             cursor: pointer;
         }
 
         .minimized .post-content {
             display: none;
+        }
+
+        /* Added margin to make the month and museum tabs more consistent */
+        .sidebar .month, .sidebar .museum-tab {
+            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -141,6 +147,8 @@
         <h2>ISL ARCHIVE</h2>
         <div class="month" onclick="showPosts('december')">DEC24</div>
         <div class="month" onclick="showPosts('november')">NOV24</div>
+        <!-- New "Museum" tab added -->
+        <div class="museum-tab" onclick="showMuseum()">Museum</div>
     </div>
 
     <!-- Content Area -->
@@ -251,6 +259,12 @@
         // Function to toggle the visibility of the post content
         function togglePostVisibility(postElement) {
             postElement.classList.toggle('minimized');
+        }
+
+        // Function to handle "Museum" tab
+        function showMuseum() {
+            alert('Museum tab clicked!');
+            // You can modify this function to display content related to the Museum section.
         }
     </script>
 </body>
