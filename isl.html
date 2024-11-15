@@ -96,8 +96,10 @@
 
         .post img, .post video {
             max-width: 100%; /* Make the image/video fit within the container */
-            border-radius: 5px;
             height: auto; /* Ensure proper aspect ratio */
+            max-height: 400px; /* Limit the image height */
+            object-fit: cover; /* Ensure image doesn't stretch and maintains aspect ratio */
+            border-radius: 5px;
         }
 
         .post-title {
@@ -157,13 +159,13 @@
                     title: "Post 1",
                     date: "2024-11-15",
                     type: "image",
-                    src: "icl.png",  // Example image source
+                    src: "image1.jpg",  // Example image source
                 },
                 {
                     title: "Video Post",
                     date: "2024-11-14",
                     type: "video",
-                    src: "ISL_DIGEST.mp4",  // Example video source
+                    src: "video1.mp4",  // Example video source
                 }
             ],
             december: [
