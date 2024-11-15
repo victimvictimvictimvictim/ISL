@@ -272,24 +272,28 @@
                 filteredPosts = posts[month].filter(post => post.type === filterType);
             }
 
-            filteredPosts.sort((a, b) => new Date(b.date) - new Date(a.date));  
+            filteredPosts.sort((a, b) => new Date(b.date) - new Date(a.date)); 
 
             filteredPosts.forEach(post => {
                 const postElement = document.createElement('div');
                 postElement.classList.add('post');
-                postElement.classList.add(post.type);
 
                 const minimizeButton = document.createElement('button');
                 minimizeButton.classList.add('minimize-btn');
                 minimizeButton.innerHTML = '-';
-                minimizeButton.onclick = function () {
+                minimizeButton.onclick = () => {
                     postElement.classList.toggle('minimized');
+                    postElement.querySelector('.post-content').classList.toggle('minimized');
                 };
                 postElement.appendChild(minimizeButton);
 
                 const title = document.createElement('div');
                 title.classList.add('post-title');
                 title.textContent = post.title;
+                title.onclick = () => {
+                    postElement.classList.toggle('minimized');
+                    postElement.querySelector('.post-content').classList.toggle('minimized');
+                };
                 postElement.appendChild(title);
 
                 const date = document.createElement('div');
@@ -303,22 +307,25 @@
                 if (post.type === 'image') {
                     const img = document.createElement('img');
                     img.src = post.src;
+                    img.onclick = () => {
+                        postElement.classList.toggle('minimized');
+                        content.classList.toggle('minimized');
+                    };
                     content.appendChild(img);
                 } else if (post.type === 'video') {
                     const video = document.createElement('video');
                     video.src = post.src;
                     video.controls = true;
+                    video.onclick = () => {
+                        postElement.classList.toggle('minimized');
+                        content.classList.toggle('minimized');
+                    };
                     content.appendChild(video);
                 }
 
                 postElement.appendChild(content);
                 postsContainer.appendChild(postElement);
             });
-        }
-
-        function sortPosts(type) {
-            currentSortType = type;
-            showPosts(activeMonth, type);
         }
 
         const mp3Files = [
