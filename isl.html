@@ -85,14 +85,43 @@
         .btn:hover {
             background-color: #ffcc00;
         }
+
+        /* Post Styling */
+        .post {
+            background-color: #333;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .post img, .post video {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+
+        .post-title {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .post-date {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .month-posts {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
     </style>
 </head>
 <body class="terminal-dark">
     <!-- Sidebar -->
     <div class="sidebar">
         <h2>ISL ARCHIVE</h2>
-        <div class="month">DEC24</div>
-        <div class="month">NOV24</div>
+        <div class="month" onclick="showPosts('november')">DEC24</div>
+        <div class="month" onclick="showPosts('november')">NOV24</div>
     </div>
 
     <!-- Content Area -->
@@ -110,23 +139,81 @@
                 <h1>Welcome to the Terminal CSS Subtab</h1>
                 <p>This subtab is styled with Terminal CSS for a retro look!</p>
                 <button onclick="window.location.href='index.html'" class="btn">Back to Home</button>
+                
+                <!-- Posts -->
+                <div id="posts" class="month-posts">
+                    <!-- Dynamic Posts will appear here -->
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Add JavaScript at the end of the body -->
     <script>
-        // Select all elements with the 'month' class
-        const monthElements = document.querySelectorAll('.month');
+        const posts = {
+            november: [
+                {
+                    title: "Post 1",
+                    date: "2024-11-15",
+                    type: "image",
+                    src: "image1.jpg",  // Example image source
+                },
+                {
+                    title: "Video Post",
+                    date: "2024-11-14",
+                    type: "video",
+                    src: "video1.mp4",  // Example video source
+                }
+            ],
+            december: [
+                {
+                    title: "Post 2",
+                    date: "2024-12-05",
+                    type: "image",
+                    src: "image2.jpg",  // Example image source
+                },
+                {
+                    title: "Another Video Post",
+                    date: "2024-12-01",
+                    type: "video",
+                    src: "video2.mp4",  // Example video source
+                }
+            ]
+        };
 
-        // Add a click event listener to each month element
-        monthElements.forEach(month => {
-            month.addEventListener('click', () => {
-                // Replace the alert with logic to show content based on the month
-                alert(`You clicked on ${month.innerText}`);
-                // Example: You can dynamically load content here or update the page.
+        function showPosts(month) {
+            const postsContainer = document.getElementById('posts');
+            postsContainer.innerHTML = ''; // Clear previous posts
+
+            // Sort posts by date (newest first)
+            const sortedPosts = posts[month].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            // Create HTML for each post
+            sortedPosts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+                
+                const titleElement = document.createElement('h2');
+                titleElement.classList.add('post-title');
+                titleElement.innerText = post.title;
+
+                const dateElement = document.createElement('p');
+                dateElement.classList.add('post-date');
+                dateElement.innerText = `Posted on: ${post.date}`;
+
+                const mediaElement = document.createElement(post.type === "video" ? 'video' : 'img');
+                mediaElement.src = post.src;
+                if (post.type === 'video') {
+                    mediaElement.controls = true;
+                }
+
+                postElement.appendChild(titleElement);
+                postElement.appendChild(dateElement);
+                postElement.appendChild(mediaElement);
+
+                postsContainer.appendChild(postElement);
             });
-        });
+        }
     </script>
 </body>
 </html>
