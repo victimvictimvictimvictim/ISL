@@ -113,5 +113,20 @@
             </div>
         </div>
     </div>
+
+    <!-- Add JavaScript at the end of the body -->
+    <script>
+        // Select all elements with the 'month' class
+        const monthElements = document.querySelectorAll('.month');
+
+        // Add a click event listener to each month element
+        monthElements.forEach(month => {
+            month.addEventListener('click', () => {
+                // Replace the alert with logic to show content based on the month
+                alert(`You clicked on ${month.innerText}`);
+                // Example: You can dynamically load content here or update the page.
+            });
+        });
+    </script>
 </body>
 </html>
