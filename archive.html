@@ -176,7 +176,7 @@
         <h2>ISL ARCHIVE</h2>
         <div class="month" onclick="setActiveMonth('december')">DEC24</div>
         <div class="month" onclick="setActiveMonth('november')">NOV24</div>
-        <div class="museum-tab" onclick="showMuseum()">Museum</div>
+        <div class="museum-tab" id="museum-tab">Museum</div>
     </div>
 
     <!-- Content Area -->
@@ -312,9 +312,9 @@
             showPosts(activeMonth, type);  // Use the active month and filter by type
         }
 
-        function showMuseum() {
+        document.getElementById('museum-tab').addEventListener('click', () => {
             setActiveMonth('museum');
-        }
+        });
 
         // Show November posts on initial load
         setActiveMonth('november');
