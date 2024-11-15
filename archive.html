@@ -293,11 +293,10 @@
         }
 
         function sortPosts(type) {
-            currentSortType = type;  // Store the selected sort type
-            showPosts(activeMonth, type);  // Use the active month and filter by type
+            currentSortType = type;
+            showPosts(activeMonth, type);
         }
 
-        // Function to play a random MP3 file
         function playRandomMP3() {
             const mp3Files = [
                 'audio1.mp3', 'audio2.mp3', 'audio3.mp3' // Add your MP3 file names here
@@ -308,7 +307,7 @@
             audio.play();
         }
 
-        // Show November posts on initial load
+        // Initial load
         setActiveMonth('november');
     </script>
 </body>
