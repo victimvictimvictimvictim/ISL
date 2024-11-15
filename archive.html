@@ -167,6 +167,16 @@
         .dropdown:hover .dropdown-content {
             display: block;
         }
+
+        /* Styling for the new audio controls */
+        .audio-controls {
+            margin-top: 20px;
+        }
+
+        .audio-slider {
+            width: 100%;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body class="terminal-dark">
@@ -176,6 +186,14 @@
         <div class="month" onclick="setActiveMonth('november')">NOV24</div>
         <div class="month" onclick="setActiveMonth('museum')">Museum</div>
         <div class="play-random-mp3-btn" onclick="playRandomMP3()">Play Random MP3</div>
+
+        <!-- Audio controls added below -->
+        <div class="audio-controls">
+            <button onclick="pauseAudio()" id="pauseButton" class="btn">Pause</button>
+            <button onclick="skipAudio()" id="skipButton" class="btn">Skip</button>
+            <label for="audioVolume">Volume:</label>
+            <input type="range" id="audioVolume" class="audio-slider" value="100" max="100" onchange="setVolume(this.value)">
+        </div>
     </div>
 
     <div class="content">
@@ -211,6 +229,7 @@
     <script>
         let activeMonth = 'november';  
         let currentSortType = null; 
+        let audio = null; // Global variable for audio player
 
         const posts = {
             november: [
@@ -302,12 +321,38 @@
 
         function playRandomMP3() {
             const mp3Files = [
-                'SHED THEORY - BEAVER.mp3', 'audio2.mp3', 'audio3.mp3'
+                'SHED THEORY - BEAVER.mp3'
             ];
 
             const randomFile = mp3Files[Math.floor(Math.random() * mp3Files.length)];
-            const audio = new Audio(randomFile);
+            audio = new Audio(randomFile);
             audio.play();
+
+            // Update button and volume slider
+            document.getElementById('pauseButton').style.display = 'inline';
+            document.getElementById('skipButton').style.display = 'inline';
+        }
+
+        // Pause audio function
+        function pauseAudio() {
+            if (audio) {
+                audio.pause();
+            }
+        }
+
+        // Skip audio function (Stop and reset)
+        function skipAudio() {
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+        }
+
+        // Set volume based on slider input
+        function setVolume(value) {
+            if (audio) {
+                audio.volume = value / 100;
+            }
         }
 
         setActiveMonth('november');
