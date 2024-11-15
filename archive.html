@@ -276,10 +276,15 @@
             ]
         };
 
-        const songs = [
-            { title: "Song 1", file: "song1.mp3" },
-            { title: "Song 2", file: "song2.mp3" },
-            { title: "Song 3", file: "song3.mp3" }
+        // Reintroducing the mp3 files
+        const mp3Files = [
+            '/audio/E1 (3x3) - Without E1 (Official Video) #ALG.mp3',
+            '/audio/Lilniina - cigirl (Official Music Video).mp3',
+            '/audio/Lilniina - e-m@il (Official Music Video).mp3',
+            '/audio/Molly Santana - What Did I Do Today？ (Official Video).mp3',
+            '/audio/Nettspend - F＊CK SWAG (Official Music Video).mp3',
+            '/audio/Nettspend - Just A Teen (Music Video).mp3',
+            '/audio/SHED THEORY - BEAVER.mp3'
         ];
 
         function setActiveMonth(month) {
@@ -305,6 +310,7 @@
                 `;
                 postsContainer.appendChild(postElement);
             });
+
             displaySongs();  // Display the song list
         }
 
@@ -315,28 +321,28 @@
 
         function sortPosts(type) {
             currentSortType = type;
-            showPosts(activeMonth, type);  
+            showPosts(activeMonth);  
         }
 
         function displaySongs() {
             const songListContainer = document.getElementById('songList');
             songListContainer.innerHTML = ''; // Clear previous songs
-            songs.forEach(song => {
+            mp3Files.forEach(file => {
                 const songElement = document.createElement('div');
                 songElement.classList.add('song-item');
-                songElement.textContent = song.title;
-                songElement.onclick = () => playSong(song);
+                songElement.textContent = file.split('/').pop().replace('.mp3', '');  // Extract the file name without extension
+                songElement.onclick = () => playSong(file);
                 songListContainer.appendChild(songElement);
             });
         }
 
-        function playSong(song) {
+        function playSong(songFile) {
             if (audio) {
                 audio.pause(); // Pause the current audio
             }
-            audio = new Audio(song.file);
+            audio = new Audio(songFile);
             audio.play();
-            document.getElementById('current-song-title').textContent = `Now Playing: ${song.title}`;
+            document.getElementById('current-song-title').textContent = `Now Playing: ${songFile.split('/').pop().replace('.mp3', '')}`;
         }
 
         function pauseAudio() {
