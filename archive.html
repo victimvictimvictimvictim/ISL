@@ -182,6 +182,8 @@
             margin-top: 20px;
             font-size: 1.2rem;
             color: #fff;
+            font-family: "Courier New", Courier, monospace; /* Terminal-style font */
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -341,6 +343,9 @@
         let currentSongIndex = 0;
 
         function playRandomMP3() {
+            // Play a random song
+            currentSongIndex = Math.floor(Math.random() * mp3Files.length);
+
             if (!audio) {
                 audio = new Audio(mp3Files[currentSongIndex]);
             } else {
@@ -358,10 +363,7 @@
         }
 
         function skipAudio() {
-            if (audio) {
-                currentSongIndex = (currentSongIndex + 1) % mp3Files.length;
-                playRandomMP3();
-            }
+            playRandomMP3();
         }
 
         function setVolume(volume) {
