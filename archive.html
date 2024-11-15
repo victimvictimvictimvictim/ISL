@@ -175,7 +175,7 @@
         <div class="month" onclick="setActiveMonth('december')">DEC24</div>
         <div class="month" onclick="setActiveMonth('november')">NOV24</div>
         <div class="month" onclick="setActiveMonth('museum')">Museum</div>
-        <div class="play-random-mp3-btn" onclick="playRandomMP3()">Play Random MP3</div> <!-- New Button -->
+        <div class="play-random-mp3-btn" onclick="playRandomMP3()">Play Random MP3</div>
     </div>
 
     <div class="content">
@@ -209,8 +209,8 @@
     </div>
 
     <script>
-        let activeMonth = 'november';  // Default active month
-        let currentSortType = null; // Track the current sort type (all, image, video)
+        let activeMonth = 'november';  
+        let currentSortType = null; 
 
         const posts = {
             november: [
@@ -228,15 +228,15 @@
         };
 
         function setActiveMonth(month) {
-            activeMonth = month;  // Set active month
+            activeMonth = month;  
             document.querySelectorAll('.month').forEach(m => m.classList.remove('active'));
             document.querySelector(`.month[onclick="setActiveMonth('${month}')"]`).classList.add('active');
-            showPosts(month, currentSortType);  // Show posts based on active month and current sort
+            showPosts(month, currentSortType);  
         }
 
         function showPosts(month, filterType = null) {
             const postsContainer = document.getElementById('posts');
-            postsContainer.innerHTML = ''; // Clear previous posts
+            postsContainer.innerHTML = '';
 
             let filteredPosts;
             if (filterType === 'all' || !filterType) {
@@ -259,6 +259,9 @@
                 const titleElement = document.createElement('h3');
                 titleElement.classList.add('post-title');
                 titleElement.innerText = post.title;
+                titleElement.onclick = () => {
+                    togglePostVisibility(postElement);
+                };
 
                 const dateElement = document.createElement('p');
                 dateElement.classList.add('post-date');
@@ -299,7 +302,7 @@
 
         function playRandomMP3() {
             const mp3Files = [
-                'audio1.mp3', 'audio2.mp3', 'audio3.mp3' // Add your MP3 file names here
+                'audio1.mp3', 'audio2.mp3', 'audio3.mp3'
             ];
 
             const randomFile = mp3Files[Math.floor(Math.random() * mp3Files.length)];
@@ -307,7 +310,6 @@
             audio.play();
         }
 
-        // Initial load
         setActiveMonth('november');
     </script>
 </body>
