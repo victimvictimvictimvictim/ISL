@@ -6,7 +6,74 @@
     <title>ISL ARCHIVE</title>
     <link rel="stylesheet" href="https://unpkg.com/terminal.css@0.7.4/dist/terminal.min.css">
     <style>
-        /* Styling as before */
+        /* Body style to use flex layout */
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 250px;
+            background-color: #2c2f36;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        .sidebar h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .month, .museum-tab {
+            font-size: 1.2rem;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .month:hover, .museum-tab:hover {
+            color: #ffcc00;
+        }
+
+        /* Content window styles */
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #1c1f22;
+            color: white;
+        }
+
+        /* Terminal Bar */
+        .terminal-bar {
+            background-color: #333;
+            display: flex;
+            justify-content: flex-start;
+            padding: 5px;
+        }
+
+        .terminal-icon {
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            border-radius: 50%;
+        }
+
+        .terminal-red { background-color: red; }
+        .terminal-yellow { background-color: yellow; }
+        .terminal-green { background-color: green; }
+
+        /* Terminal Window */
+        .terminal-window {
+            background-color: #111;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
         .btn {
             background-color: #333;
             color: white;
@@ -19,6 +86,38 @@
             background-color: #ffcc00;
         }
 
+        /* Post Styling */
+        .post {
+            background-color: #333;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .post img, .post video {
+            max-width: 100%; /* Ensure the image/video fits within the container */
+            height: auto; /* Preserve aspect ratio */
+            object-fit: cover; /* Prevent stretching */
+            border-radius: 5px;
+        }
+
+        .post-title {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .post-date {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .month-posts {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
         /* Minimize Button Styling */
         .minimize-btn {
             position: absolute;
@@ -27,8 +126,8 @@
             background-color: transparent;
             color: white;
             border: none;
-            font-size: 1.8rem;
-            padding: 5px;
+            font-size: 1.8rem; /* Increased font size */
+            padding: 5px; /* Added padding to make the button larger */
             cursor: pointer;
         }
 
@@ -36,42 +135,47 @@
             display: none;
         }
 
-        .post-title {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-            cursor: pointer; /* Make the title clickable */
+        /* Added margin to make the month and museum tabs more consistent */
+        .sidebar .month, .sidebar .museum-tab {
+            margin-bottom: 15px;
         }
-
-        /* Additional styles if necessary */
     </style>
 </head>
 <body class="terminal-dark">
+    <!-- Sidebar -->
     <div class="sidebar">
         <h2>ISL ARCHIVE</h2>
         <div class="month" onclick="showPosts('december')">DEC24</div>
         <div class="month" onclick="showPosts('november')">NOV24</div>
+        <!-- New "Museum" tab added -->
         <div class="museum-tab" onclick="showMuseum()">Museum</div>
     </div>
 
+    <!-- Content Area -->
     <div class="content">
         <div class="terminal">
+            <!-- Terminal Bar -->
             <div class="terminal-bar">
                 <span class="terminal-icon terminal-red"></span>
                 <span class="terminal-icon terminal-yellow"></span>
                 <span class="terminal-icon terminal-green"></span>
             </div>
+
+            <!-- Terminal Window -->
             <div class="terminal-window">
                 <h1>Welcome to the Terminal CSS Subtab</h1>
                 <p>This subtab is styled with Terminal CSS for a retro look!</p>
-                <button onclick="window.location.href='/'" class="btn">Back to Home</button>
-
+                <button onclick="window.location.href='index.html'" class="btn">Back to Home</button>
+                
+                <!-- Posts -->
                 <div id="posts" class="month-posts">
-                    <!-- Posts will appear here -->
+                    <!-- Dynamic Posts will appear here -->
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Add JavaScript at the end of the body -->
     <script>
         const posts = {
             november: [
@@ -79,13 +183,13 @@
                     title: "NL_FA",
                     date: "2024-11-15",
                     type: "image",
-                    src: "IMG_7888.jpg",
+                    src: "IMG_7888.jpg",  // Example image source
                 },
                 {
                     title: "ISL Digest Week#1",
                     date: "2024-11-14",
                     type: "video",
-                    src: "ISL_DIGEST.mp4",
+                    src: "ISL_DIGEST.mp4",  // Example video source
                 }
             ],
             december: [
@@ -93,13 +197,13 @@
                     title: "Post 2",
                     date: "2024-12-05",
                     type: "image",
-                    src: "image2.jpg",
+                    src: "image2.jpg",  // Example image source
                 },
                 {
                     title: "Another Video Post",
                     date: "2024-12-01",
                     type: "video",
-                    src: "video2.mp4",
+                    src: "video2.mp4",  // Example video source
                 }
             ]
         };
@@ -108,12 +212,15 @@
             const postsContainer = document.getElementById('posts');
             postsContainer.innerHTML = ''; // Clear previous posts
 
+            // Sort posts by date (newest first)
             const sortedPosts = posts[month].sort((a, b) => new Date(b.date) - new Date(a.date));
 
+            // Create HTML for each post
             sortedPosts.forEach(post => {
                 const postElement = document.createElement('div');
                 postElement.classList.add('post');
 
+                // Create minimize button
                 const minimizeButton = document.createElement('button');
                 minimizeButton.classList.add('minimize-btn');
                 minimizeButton.innerText = '-';
@@ -122,7 +229,6 @@
                 const titleElement = document.createElement('h2');
                 titleElement.classList.add('post-title');
                 titleElement.innerText = post.title;
-                titleElement.onclick = () => togglePostVisibility(postElement); // Make title clickable
 
                 const dateElement = document.createElement('p');
                 dateElement.classList.add('post-date');
@@ -132,11 +238,12 @@
                 mediaElement.src = post.src;
 
                 if (post.type === 'video') {
-                    mediaElement.controls = true;
-                    mediaElement.width = 400;
-                    mediaElement.height = 225;
+                    mediaElement.controls = true; // Add controls for video
+                    mediaElement.width = 400; // Set a fixed width for the video if necessary
+                    mediaElement.height = 225; // Optional: Adjust the height to maintain aspect ratio
                 }
 
+                // Create a div for the content (to minimize)
                 const contentDiv = document.createElement('div');
                 contentDiv.classList.add('post-content');
                 contentDiv.appendChild(dateElement);
@@ -149,12 +256,15 @@
             });
         }
 
+        // Function to toggle the visibility of the post content
         function togglePostVisibility(postElement) {
             postElement.classList.toggle('minimized');
         }
 
+        // Function to handle "Museum" tab
         function showMuseum() {
             alert('Museum tab clicked!');
+            // You can modify this function to display content related to the Museum section.
         }
     </script>
 </body>
