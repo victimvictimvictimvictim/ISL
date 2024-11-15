@@ -321,12 +321,22 @@
 
         function playRandomMP3() {
             const mp3Files = [
+                'E1 (3x3) - Without E1 (Official Video) #ALG.mp3',
+                'Lilniina - cigirl (Official Music Video).mp3',
+                'Lilniina - e-m@il (Official Music Video).mp3',
+                'Molly Santana - What Did I Do Today？ (Official Video).mp3',
+                'Nettspend - F＊CK SWAG (Official Music Video).mp3',
+                'Nettspend - Just A Teen (Music Video).mp3',
                 'SHED THEORY - BEAVER.mp3'
             ];
 
             const randomFile = mp3Files[Math.floor(Math.random() * mp3Files.length)];
+            console.log("Playing file:", randomFile);  // Log to see which file is being selected
+
             audio = new Audio(randomFile);
-            audio.play();
+            audio.play().catch(error => {
+                console.error("Error playing audio:", error);  // Log any errors when trying to play the audio
+            });
 
             // Update button and volume slider
             document.getElementById('pauseButton').style.display = 'inline';
