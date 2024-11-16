@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iceland aka the World Trade Centre</title>
-    <!-- Favicon -->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-firestore.js"></script>
 
     <style>
         body {
@@ -14,6 +16,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            flex-direction: column;
         }
         img {
             max-width: 100%;
@@ -21,20 +24,128 @@
             cursor: pointer;
         }
         audio {
-            display: none; /* This hides the audio player from view */
+            display: none;
+        }
+        #loginForm, #signupForm {
+            display: none;
+        }
+        .form-container {
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <!-- Image -->
-<a href="/archive.html">
-    <img src="66.png" alt="ISL">
-</a>
+    <!-- Login Form -->
+    <div id="loginForm" class="form-container">
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button onclick="loginUser()">Log In</button>
+        <button onclick="showSignupForm()">Go to Sign Up</button>
+    </div>
 
-<!-- Audio Player -->
-<audio autoplay loop>
-    <source src="ost.ogg" type="audio/ogg">
-    Your browser does not support the audio element.
-</audio>
+    <!-- Sign Up Form -->
+    <div id="signupForm" class="form-container">
+        <h2>Sign Up</h2>
+        <input type="email" id="signupEmail" placeholder="Email" required>
+        <input type="password" id="signupPassword" placeholder="Password" required>
+        <button onclick="signupUser()">Sign Up</button>
+        <button onclick="showLoginForm()">Already have an account? Log In</button>
+    </div>
+
+    <!-- Image Link to Archive (hidden until logged in) -->
+    <a id="imageLink" href="#" onclick="redirectToArchive()" style="display:none;">
+        <img src="66.png" alt="ISL">
+    </a>
+
+    <!-- Audio Player -->
+    <audio autoplay loop>
+        <source src="ost.ogg" type="audio/ogg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Show Login Form
+        function showLoginForm() {
+            document.getElementById('signupForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        }
+
+        // Show Sign Up Form
+        function showSignupForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'block';
+        }
+
+        // Log In the User
+        function loginUser() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    saveUserProfile(user);
+                })
+                .catch((error) => {
+                    alert("Login failed: " + error.message);
+                });
+        }
+
+        // Sign Up the User
+        function signupUser() {
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    saveUserProfile(user);
+                })
+                .catch((error) => {
+                    alert("Signup failed: " + error.message);
+                });
+        }
+
+        // Save User Profile to Firestore
+        function saveUserProfile(user) {
+            const userRef = db.collection('users').doc(user.uid);
+            userRef.set({
+                email: user.email,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            })
+            .then(() => {
+                alert("User profile saved.");
+                // After saving, show the image link and redirect
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('signupForm').style.display = 'none';
+                document.getElementById('imageLink').style.display = 'block';
+                redirectToArchive();
+            })
+            .catch((error) => {
+                alert("Error saving profile: " + error.message);
+            });
+        }
+
+        // Redirect to Archive Page
+        function redirectToArchive() {
+            window.location.href = '/archive';
+        }
+    </script>
 </body>
 </html>
