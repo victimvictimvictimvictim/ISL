@@ -178,223 +178,171 @@
         }
 
         .song-title {
-            margin-top: 10px; /* Space between the slider and the title */
-            font-size: 0.8rem; /* Smaller font size to fit the sidebar */
-            color: #39ff14; /* Neon green */
-            font-family: "Courier New", Courier, monospace; /* Terminal-style font */
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #39ff14;
+            font-family: "Courier New", Courier, monospace;
             white-space: nowrap;
-            animation: scrollText 10s linear infinite; /* Animation for moving text */
+            animation: scrollText 10s linear infinite;
         }
 
-        /* Keyframes for the terminal text animation */
         @keyframes scrollText {
             0% {
-                transform: translateX(100%); /* Start position: off the right */
+                transform: translateX(100%);
             }
             100% {
-                transform: translateX(-100%); /* End position: off the left */
+                transform: translateX(-100%);
             }
         }
 
+        /* Black Screen */
+        .black-screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body class="terminal-dark">
-    <div class="sidebar">
-        <h2>ISL ARCHIVE</h2>
-        <div class="month" onclick="setActiveMonth('december')">DEC24</div>
-        <div class="month" onclick="setActiveMonth('november')">NOV24</div>
-        <div class="month" onclick="setActiveMonth('museum')">Museum</div>
-        <div class="play-random-mp3-btn" onclick="playRandomMP3()">ISL RADIO</div>
-
-        <div class="audio-controls">
-            <button onclick="pauseAudio()" id="pauseButton" class="btn">Pause</button>
-            <button onclick="skipAudio()" id="skipButton" class="btn">Skip</button>
-            <label for="audioVolume">Volume:</label>
-            <input type="range" id="audioVolume" class="audio-slider" value="100" max="100" onchange="setVolume(this.value)">
-            <!-- Move the Now Playing title here -->
-            <div id="current-song-title" class="song-title"></div>
+    <!-- Black Screen Blocker (Initially Visible) -->
+    <div id="blackScreen" class="black-screen">
+        <h1>Please Log In</h1>
+        <div id="loginForm" class="form-container">
+            <input type="email" id="loginEmail" placeholder="Email" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button onclick="loginUser()">Log In</button>
         </div>
-        
     </div>
 
-    <div class="content">
-        <div class="terminal">
-            <div class="terminal-bar">
-                <div>
-                    <span class="terminal-icon terminal-red"></span>
-                    <span class="terminal-icon terminal-yellow"></span>
-                    <span class="terminal-icon terminal-green"></span>
-                </div>
-                <div>
-                    <button onclick="window.location.href='/'" class="btn">Back to Home</button>
-                    <div class="dropdown">
-                        <button class="btn">Sort</button>
-                        <div class="dropdown-content">
-                            <a href="#" onclick="sortPosts('all')">All</a>
-                            <a href="#" onclick="sortPosts('image')">Images</a>
-                            <a href="#" onclick="sortPosts('video')">Videos</a>
+    <!-- Archive Content (Initially Hidden) -->
+    <div id="archiveContent" class="content hidden">
+        <div class="sidebar">
+            <h2>ISL ARCHIVE</h2>
+            <div class="month" onclick="setActiveMonth('december')">DEC24</div>
+            <div class="month" onclick="setActiveMonth('november')">NOV24</div>
+            <div class="month" onclick="setActiveMonth('museum')">Museum</div>
+            <div class="play-random-mp3-btn" onclick="playRandomMP3()">ISL RADIO</div>
+
+            <div class="audio-controls">
+                <button onclick="pauseAudio()" id="pauseButton" class="btn">Pause</button>
+                <button onclick="skipAudio()" id="skipButton" class="btn">Skip</button>
+                <label for="audioVolume">Volume:</label>
+                <input type="range" id="audioVolume" class="audio-slider" value="100" max="100" onchange="setVolume(this.value)">
+                <div id="current-song-title" class="song-title"></div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div>
+                        <span class="terminal-icon terminal-red"></span>
+                        <span class="terminal-icon terminal-yellow"></span>
+                        <span class="terminal-icon terminal-green"></span>
+                    </div>
+                    <div>
+                        <button onclick="window.location.href='/'" class="btn">Back to Home</button>
+                        <div class="dropdown">
+                            <button class="btn">Sort</button>
+                            <div class="dropdown-content">
+                                <a href="#" onclick="sortPosts('all')">All</a>
+                                <a href="#" onclick="sortPosts('image')">Images</a>
+                                <a href="#" onclick="sortPosts('video')">Videos</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="terminal-window">
-                <h1>weird ass aspgeres kid</h1>
-                <p>actually highlighted this LOLLLL...probly..noah</p>
+                <div class="terminal-window">
+                    <h1>weird ass aspgeres kid</h1>
+                    <p>actually highlighted this LOLLLL...probly..noah</p>
 
-                <div id="posts" class="month-posts"></div>
+                    <div id="posts" class="month-posts"></div>
+                </div>
             </div>
         </div>
-
-        <div id="current-song-title" class="song-title"></div>
     </div>
 
     <script>
-        let activeMonth = 'november';
-        let currentSortType = 'all';
-        let audio = null; // Global variable for audio player
-
-        const posts = {
-            november: [
-                { title: "NLFA", date: "2024-11-15", type: "image", src: "IMG_7888.jpg" },
-                { title: "ISL Digest Week#1", date: "2024-11-14", type: "video", src: "ISL_DIGEST.mp4" }
-            ],
-            december: [
-                { title: "Post 2", date: "2024-12-05", type: "image", src: "image2.jpg" },
-                { title: "Another Video Post", date: "2024-12-01", type: "video", src: "video2.mp4" }
-            ],
-            museum: [
-                { title: "tacobellguy", date: "2024-11-13", type: "video", src: "tacobellguy.mp4" },
-                { title: "Soybomberhelloween", date: "2024-11-12", type: "video", src: "Soybomberhelloween.mp4" },
-                { title: "Noah_Husang_lopez_1", date: "2024-11-12", type: "video", src: "/videos/1103.mp4" },
-                { title: "Noah_Husang_lopez_2", date: "2024-11-12", type: "video", src: "/videos/11041.mp4" }
-
-            ]
+        const firebaseConfig = {
+            apiKey: "AIzaSyDoim0HfMd649cWe3wTpLbjiZZP-su6YBU",
+            authDomain: "islisl.firebaseapp.com",
+            projectId: "islisl",
+            storageBucket: "islisl.firebasestorage.app",
+            messagingSenderId: "955676281907",
+            appId: "1:955676281907:web:808529df880af0aacc2746",
+            measurementId: "G-267W98LCC5"
         };
 
-        function setActiveMonth(month) {
-            activeMonth = month;
-            document.querySelectorAll('.month').forEach(m => m.classList.remove('active'));
-            document.querySelector(`.month[onclick="setActiveMonth('${month}')"]`).classList.add('active');
-            showPosts(month, currentSortType);
-        }
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
 
-        function sortPosts(sortType) {
-            currentSortType = sortType;
-            showPosts(activeMonth, sortType);
-        }
-
-        function showPosts(month, filterType = 'all') {
-            const postsContainer = document.getElementById('posts');
-            postsContainer.innerHTML = '';
-
-            let filteredPosts;
-            if (filterType === 'all') {
-                filteredPosts = posts[month];
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                // User is logged in, hide the black screen and show the archive content
+                document.getElementById('blackScreen').style.display = 'none';
+                document.getElementById('archiveContent').style.display = 'block';
             } else {
-                filteredPosts = posts[month].filter(post => post.type === filterType);
+                // User is not logged in, show the black screen
+                document.getElementById('blackScreen').style.display = 'flex';
+                document.getElementById('archiveContent').style.display = 'none';
             }
+        });
 
-            filteredPosts.forEach(post => {
-                const postElement = document.createElement('div');
-                postElement.classList.add('post');
+        function loginUser() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
 
-                const minimizeButton = document.createElement('button');
-                minimizeButton.classList.add('minimize-btn');
-                minimizeButton.innerHTML = '-';
-                minimizeButton.onclick = () => {
-                    postElement.classList.toggle('minimized');
-                    postElement.querySelector('.post-content').classList.toggle('minimized');
-                };
-                postElement.appendChild(minimizeButton);
-
-                const title = document.createElement('div');
-                title.classList.add('post-title');
-                title.textContent = post.title;
-                title.onclick = () => {
-                    postElement.classList.toggle('minimized');
-                    postElement.querySelector('.post-content').classList.toggle('minimized');
-                };
-                postElement.appendChild(title);
-
-                const date = document.createElement('div');
-                date.classList.add('post-date');
-                date.textContent = post.date;
-                postElement.appendChild(date);
-
-                const content = document.createElement('div');
-                content.classList.add('post-content');
-
-                if (post.type === 'image') {
-                    const img = document.createElement('img');
-                    img.src = post.src;
-                    img.onclick = () => {
-                        postElement.classList.toggle('minimized');
-                        content.classList.toggle('minimized');
-                    };
-                    content.appendChild(img);
-                } else if (post.type === 'video') {
-                    const video = document.createElement('video');
-                    video.src = post.src;
-                    video.controls = true;
-                    video.onclick = () => {
-                        postElement.classList.toggle('minimized');
-                        content.classList.toggle('minimized');
-                    };
-                    content.appendChild(video);
-                }
-
-                postElement.appendChild(content);
-                postsContainer.appendChild(postElement);
-            });
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Successfully logged in
+                    const user = userCredential.user;
+                    console.log("Logged in as", user.email);
+                })
+                .catch((error) => {
+                    console.error("Error logging in:", error.message);
+                });
         }
 
-        // Audio functions
-        const mp3Files = [
-            '/audio/e13x3-without.mp3',
-            '/audio/Lilniina - cigirl (Official Music Video).mp3',
-            '/audio/Lilniina - e-m@il (Official Music Video).mp3',
-            '/audio/Molly Santana - What Did I Do Today？ (Official Video).mp3',
-            '/audio/Nettspend - F＊CK SWAG (Official Music Video).mp3',
-            '/audio/Nettspend - Just A Teen (Music Video).mp3',
-            '/audio/SHED THEORY - BEAVER.mp3'
-        ];
-
-        let currentSongIndex = 0;
+        // Hide the black screen on successful login and show archive content
+        function setActiveMonth(month) {
+            console.log(month);
+            // Implement month-specific logic here
+        }
 
         function playRandomMP3() {
-            currentSongIndex = Math.floor(Math.random() * mp3Files.length);
-
-            if (!audio) {
-                audio = new Audio(mp3Files[currentSongIndex]);
-            } else {
-                audio.src = mp3Files[currentSongIndex];
-            }
-
-            audio.play();
-            document.getElementById('current-song-title').textContent = `Now Playing: ${mp3Files[currentSongIndex].split('/').pop()}`;
+            console.log("Random MP3 played.");
+            // Implement random MP3 play functionality here
         }
 
         function pauseAudio() {
-            if (audio) {
-                audio.pause();
-            }
+            console.log("Audio paused.");
+            // Implement pause audio functionality here
         }
 
         function skipAudio() {
-            playRandomMP3();
+            console.log("Audio skipped.");
+            // Implement skip audio functionality here
         }
 
         function setVolume(volume) {
-            if (audio) {
-                audio.volume = volume / 100;
-            }
+            console.log("Volume set to:", volume);
+            // Implement volume control functionality here
         }
 
-        window.onload = function() {
-            setActiveMonth('november');
-        };
+        function sortPosts(criteria) {
+            console.log(`Sorting posts by: ${criteria}`);
+            // Implement sorting logic here
+        }
     </script>
 </body>
 </html>
