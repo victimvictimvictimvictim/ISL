@@ -210,6 +210,11 @@
         .hidden {
             display: none;
         }
+
+        .form-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body class="terminal-dark">
@@ -220,6 +225,14 @@
             <input type="email" id="loginEmail" placeholder="Email" required>
             <input type="password" id="loginPassword" placeholder="Password" required>
             <button onclick="loginUser()">Log In</button>
+            <button onclick="showSignupForm()">Sign Up</button>
+        </div>
+        <div id="signupForm" class="form-container hidden">
+            <h2>Sign Up</h2>
+            <input type="email" id="signupEmail" placeholder="Email" required>
+            <input type="password" id="signupPassword" placeholder="Password" required>
+            <button onclick="signupUser()">Sign Up</button>
+            <button onclick="showLoginForm()">Already have an account? Log In</button>
         </div>
     </div>
 
@@ -311,6 +324,32 @@
                 .catch((error) => {
                     console.error("Error logging in:", error.message);
                 });
+        }
+
+        function signupUser() {
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Successfully signed up
+                    const user = userCredential.user;
+                    console.log("Signed up as", user.email);
+                    showLoginForm();
+                })
+                .catch((error) => {
+                    console.error("Error signing up:", error.message);
+                });
+        }
+
+        function showSignupForm() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('signupForm').classList.remove('hidden');
+        }
+
+        function showLoginForm() {
+            document.getElementById('signupForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
         }
 
         // Hide the black screen on successful login and show archive content
