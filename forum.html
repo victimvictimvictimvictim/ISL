@@ -3,104 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forum - ISL Archive</title>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+    <title>ISL FORUM</title>
+    <link rel="stylesheet" href="https://unpkg.com/terminal.css@0.7.4/dist/terminal.min.css">
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
 
-        // Firebase configuration
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDoim0HfMd649cWe3wTpLbjiZZP-su6YBU",
-            authDomain: "islisl.firebaseapp.com",
-            projectId: "islisl",
-            storageBucket: "islisl.firebasestorage.app",
-            messagingSenderId: "955676281907",
-            appId: "1:955676281907:web:808529df880af0aacc2746",
-            measurementId: "G-267W98LCC5"
-        };
+        .sidebar {
+            width: 250px;
+            background-color: #2c2f36;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        .sidebar h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
 
-        // Check if user is logged in
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById("user-profile").textContent = `Hello, ${user.displayName || user.email}`;
-            } else {
-                window.location.href = '/login.html'; // Redirect if not logged in
+        .month, .museum-tab, .play-random-mp3-btn {
+            font-size: 1.2rem;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .month:hover, .museum-tab:hover, .play-random-mp3-btn:hover {
+            color: #ffcc00;
+        }
+
+        .month.active {
+            color: #ffcc00;
+            font-weight: bold;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #1c1f22;
+            color: white;
+        }
+
+        .terminal-bar {
+            background-color: #333;
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+        }
+
+        .terminal-icon {
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            border-radius: 50%;
+        }
+
+        .terminal-red { background-color: red; }
+        .terminal-yellow { background-color: yellow; }
+        .terminal-green { background-color: green; }
+
+        .terminal-window {
+            background-color: #111;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .btn {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #ffcc00;
+        }
+
+        .post {
+            background-color: #333;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .post img, .post video {
+            max-width: 600px;
+            height: auto;
+            object-fit: contain;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .post-title {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+
+        .post-date {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .month-posts {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .minimize-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background-color: transparent;
+            color: white;
+            border: none;
+            font-size: 1.8rem;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .minimized .post-content {
+            display: none;
+        }
+
+        .sidebar .month, .sidebar .museum-tab, .sidebar .play-random-mp3-btn {
+            margin-bottom: 15px;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #333;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ffcc00;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .user-profile {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .user-profile img {
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+
+        .user-profile h3 {
+            margin: 0;
+        }
+
+        .audio-controls {
+            margin-top: 20px;
+        }
+
+        .audio-slider {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .song-title {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #39ff14;
+            font-family: "Courier New", Courier, monospace;
+            white-space: nowrap;
+            animation: scrollText 10s linear infinite;
+        }
+
+        @keyframes scrollText {
+            0% {
+                transform: translateX(100%);
             }
-        });
-
-        // Function to display posts
-        async function loadPosts() {
-            const postsCollection = collection(db, "forumPosts");
-            const postsSnapshot = await getDocs(postsCollection);
-            const postsList = document.getElementById("posts-list");
-            postsSnapshot.forEach(doc => {
-                const post = doc.data();
-                const postElement = document.createElement("div");
-                postElement.classList.add("post");
-                postElement.innerHTML = `
-                    <h3>${post.title}</h3>
-                    <p>${post.content}</p>
-                    <small>Posted on: ${post.date}</small>
-                `;
-                postsList.appendChild(postElement);
-            });
-        }
-
-        // Submit new post
-        async function submitPost(event) {
-            event.preventDefault();
-            const title = document.getElementById("post-title").value;
-            const content = document.getElementById("post-content").value;
-            const date = new Date().toLocaleString();
-
-            try {
-                await addDoc(collection(db, "forumPosts"), {
-                    title: title,
-                    content: content,
-                    date: date
-                });
-                loadPosts(); // Reload posts after submission
-            } catch (e) {
-                console.error("Error adding document: ", e);
+            100% {
+                transform: translateX(-100%);
             }
         }
 
-        window.onload = function() {
-            loadPosts();
-            document.getElementById("post-form").addEventListener("submit", submitPost);
+        /* New Post Form */
+        .new-post-form {
+            background-color: #333;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
         }
-    </script>
+
+        .new-post-form input, .new-post-form textarea, .new-post-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #444;
+            border: none;
+            color: white;
+        }
+
+        .new-post-form button {
+            background-color: #39ff14;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .new-post-form button:hover {
+            background-color: #ffcc00;
+        }
+    </style>
 </head>
 <body>
-    <h1>Forum - ISL Archive</h1>
-    
-    <!-- User Profile -->
-    <div id="user-profile" style="text-align: right;"></div>
+    <div class="sidebar">
+        <h2>ISL FORUM</h2>
+        <div class="month" onclick="setActiveMonth('december')">DEC24</div>
+        <div class="month" onclick="setActiveMonth('november')">NOV24</div>
+        <div class="month" onclick="setActiveMonth('museum')">Museum</div>
+        <div class="play-random-mp3-btn" onclick="playRandomMP3()">ISL RADIO</div>
 
-    <!-- Post Form -->
-    <form id="post-form">
-        <label for="post-title">Title:</label>
-        <input type="text" id="post-title" required>
-        <br>
-        <label for="post-content">Content:</label>
-        <textarea id="post-content" required></textarea>
-        <br>
-        <button type="submit">Submit Post</button>
-    </form>
+        <div class="user-profile">
+            <img src="user-profile.jpg" alt="User Profile">
+            <h3>John Doe</h3>
+        </div>
 
-    <hr>
+        <div class="audio-controls">
+            <button onclick="pauseAudio()" id="pauseButton" class="btn">Pause</button>
+            <button onclick="skipAudio()" id="skipButton" class="btn">Skip</button>
+            <label for="audioVolume">Volume:</label>
+            <input type="range" id="audioVolume" class="audio-slider" value="100" max="100" onchange="setVolume(this.value)">
+            <div id="current-song-title" class="song-title"></div>
+        </div>
 
-    <!-- Posts List -->
-    <div id="posts-list">
-        <!-- Posts will be dynamically loaded here -->
+        <!-- New Post Button -->
+        <button onclick="showNewPostForm()" class="btn">MAKE NEW POST</button>
     </div>
 
+    <div class="content">
+        <div class="terminal">
+            <div class="terminal-bar">
+                <div>
+                    <span class="terminal-icon terminal-red"></span>
+                    <span class="terminal-icon terminal-yellow"></span>
+                    <span class="terminal-icon terminal-green"></span>
+                </div>
+                <div>
+                    <button onclick="window.location.href='/'" class="btn">Back to Home</button>
+                    <div class="dropdown">
+                        <button class="btn">Sort</button>
+                        <div class="dropdown-content">
+                            <a href="#" onclick="sortPosts('all')">All</a>
+                            <a href="#" onclick="sortPosts('image')">Images</a>
+                            <a href="#" onclick="sortPosts('video')">Videos</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="terminal-window">
+                <h1>Forum Posts</h1>
+                <div id="posts" class="month-posts"></div>
+            </div>
+        </div>
+
+        <!-- New Post Form -->
+        <div id="newPostForm" class="new-post-form" style="display: none;">
+            <h2>Create New Post</h2>
+            <input type="text" id="postTitle" placeholder="Post Title" required>
+            <textarea id="postContent" placeholder="Post Content (Text, Image URL, or Video URL)" required></textarea>
+            <select id="postMonth">
+                <option value="november">November 2024</option>
+                <option value="december">December 2024</option>
+            </select>
+            <button onclick="submitNewPost()">Submit Post</button>
+        </div>
+    </div>
+
+    <script>
+        let activeMonth = 'november';
+        let currentSortType = 'all';
+
+        const posts = {
+            november: [
+                { title: "Mystery of the Pyramid", date: "2024-11-01", type: "image", src: "pyramid_image.jpg" },
+                { title: "First Mystery of November", date: "2024-11-10", type: "video", src: "djmix1.mp4" },
+            ],
+            december: [
+                { title: "Mystery of the Pyramid", date: "2024-12-01", type: "image", src: "pyramid_image.jpg" },
+                { title: "New Year's Eve Celebration", date: "2024-12-31", type: "video", src: "nye_video.mp4" },
+            ]
+        };
+
+        function setActiveMonth(month) {
+            activeMonth = month;
+            displayPosts();
+            document.querySelectorAll('.month').forEach(monthEl => {
+                monthEl.classList.remove('active');
+            });
+            document.querySelector(`.month[onclick="setActiveMonth('${month}')"]`).classList.add('active');
+        }
+
+        function displayPosts() {
+            const postsContainer = document.getElementById('posts');
+            postsContainer.innerHTML = '';
+            posts[activeMonth].filter(post => currentSortType === 'all' || post.type === currentSortType)
+                .forEach(post => {
+                    const postDiv = document.createElement('div');
+                    postDiv.classList.add('post');
+                    postDiv.innerHTML = `
+                        <div class="post-title">${post.title}</div>
+                        <div class="post-date">${post.date}</div>
+                        ${post.type === 'image' ? 
+                            `<img src="${post.src}" alt="${post.title}" onclick="openPost('${post.src}')">` : 
+                            `<video controls>
+                                <source src="${post.src}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>`}
+                    `;
+                    postsContainer.appendChild(postDiv);
+                });
+        }
+
+        function sortPosts(type) {
+            currentSortType = type;
+            displayPosts();
+        }
+
+        function openPost(src) {
+            window.open(src, "_blank");
+        }
+
+        function showNewPostForm() {
+            document.getElementById('newPostForm').style.display = 'block';
+        }
+
+        function submitNewPost() {
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            const month = document.getElementById('postMonth').value;
+
+            if (title && content) {
+                const newPost = {
+                    title: title,
+                    date: new Date().toISOString().split('T')[0],
+                    type: content.startsWith('http') ? (content.endsWith('.mp4') ? 'video' : 'image') : 'text',
+                    src: content,
+                };
+                posts[month].push(newPost);
+                displayPosts();
+                document.getElementById('newPostForm').reset();
+                document.getElementById('newPostForm').style.display = 'none';
+            } else {
+                alert("Please fill out all fields.");
+            }
+        }
+
+        window.onload = displayPosts;
+    </script>
 </body>
 </html>
