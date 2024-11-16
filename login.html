@@ -3,16 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISL LOGIN</title>
-    <link rel="stylesheet" href="style.css">
-
-    <!-- Firebase SDK imports (use CDN) -->
+    <title>Login - ISL Archive</title>
     <script type="module">
-        // Import Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
-        // Your web app's Firebase configuration
+        // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDoim0HfMd649cWe3wTpLbjiZZP-su6YBU",
             authDomain: "islisl.firebaseapp.com",
@@ -27,35 +23,92 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Function for handling login
-        async function handleLogin() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        // Handle Login
+        async function loginUser(event) {
+            event.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
 
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                // If successful, redirect to the archive page
-                window.location.href = "/archive.html";
+                await signInWithEmailAndPassword(auth, email, password);
+                window.location.href = '/archive.html'; // Redirect to archive page
             } catch (error) {
-                alert("Error: " + error.message);
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                displayError(errorMessage); // Display error message on login failure
             }
         }
+
+        // Handle Sign Up
+        async function signupUser(event) {
+            event.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                window.location.href = '/archive.html'; // Redirect to archive page after signup
+            } catch (error) {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                displayError(errorMessage); // Display error message on signup failure
+            }
+        }
+
+        // Display error message
+        function displayError(message) {
+            const errorElement = document.getElementById("error-message");
+            errorElement.textContent = message;
+            errorElement.style.display = "block";
+        }
+
+        // Check if the user is already logged in (if they reload the page)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = '/archive.html'; // Redirect to archive if already logged in
+            }
+        });
     </script>
 </head>
 <body>
-    <div class="login-container">
-        <h1>Login to ISL Archive</h1>
-        <form id="loginForm">
-            <div class="input-container">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="input-container">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="button" onclick="handleLogin()">Login</button>
-        </form>
-    </div>
+    <h1>Login to ISL Archive</h1>
+
+    <div id="error-message" style="color: red; display: none;"></div>
+
+    <!-- Login Form -->
+    <form id="login-form">
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+        <br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" required>
+        <br>
+
+        <button type="submit" onclick="loginUser(event)">Login</button>
+    </form>
+
+    <p>Don't have an account? <button onclick="showSignupForm()">Sign Up</button></p>
+
+    <!-- Signup Form -->
+    <form id="signup-form" style="display: none;">
+        <label for="email">Email:</label>
+        <input type="email" id="signup-email" required>
+        <br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="signup-password" required>
+        <br>
+
+        <button type="submit" onclick="signupUser(event)">Sign Up</button>
+    </form>
+
+    <script>
+        // Toggle between Login and Signup forms
+        function showSignupForm() {
+            document.getElementById("login-form").style.display = "none";
+            document.getElementById("signup-form").style.display = "block";
+        }
+    </script>
 </body>
 </html>
