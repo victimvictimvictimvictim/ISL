@@ -224,14 +224,14 @@
         <div id="loginForm" class="form-container">
             <input type="email" id="loginEmail" placeholder="Email" required>
             <input type="password" id="loginPassword" placeholder="Password" required>
-            <button onclick="loginUser()">Log In</button>
+            <button id="loginBtn" onclick="loginUser()" disabled>Log In</button>
             <button onclick="showSignupForm()">Sign Up</button>
         </div>
         <div id="signupForm" class="form-container hidden">
             <h2>Sign Up</h2>
             <input type="email" id="signupEmail" placeholder="Email" required>
             <input type="password" id="signupPassword" placeholder="Password" required>
-            <button onclick="signupUser()">Sign Up</button>
+            <button id="signupBtn" onclick="signupUser()" disabled>Sign Up</button>
             <button onclick="showLoginForm()">Already have an account? Log In</button>
         </div>
     </div>
@@ -293,76 +293,28 @@
             storageBucket: "islisl.firebasestorage.app",
             messagingSenderId: "955676281907",
             appId: "1:955676281907:web:808529df880af0aacc2746",
-            measurementId: "G-267W98LCC5"
+            measurementId: "G-MV8C1HEQ1D"
         };
-
-        const app = firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
+        // Authentication state listener
         auth.onAuthStateChanged(function(user) {
             if (user) {
-                // User is logged in, hide the black screen and show the archive content
-                document.getElementById('blackScreen').style.display = 'none';
-                document.getElementById('archiveContent').style.display = 'block';
+                if (user.emailVerified) {
+                    document.getElementById('blackScreen').style.display = 'none';
+                    document.getElementById('archiveContent').style.display = 'block';
+                } else {
+                    alert("Please verify your email before logging in.");
+                    auth.signOut();
+                    document.getElementById('blackScreen').style.display = 'flex';
+                    document.getElementById('archiveContent').style.display = 'none';
+                }
             } else {
-                // User is not logged in, show the black screen
                 document.getElementById('blackScreen').style.display = 'flex';
                 document.getElementById('archiveContent').style.display = 'none';
             }
         });
-
-        function loginUser() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Successful login
-                    const user = userCredential.user;
-                    console.log("Logged in as", user.email);
-                })
-                .catch((error) => {
-                    console.error("Error logging in:", error.message);
-                    alert("Login failed: " + error.message);
-                });
-        }
-
-
-
-        function signupUser() {
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-
-            if (!email || !password) {
-                alert("Please fill in both fields.");
-                return;
-            }
-
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Successful signup
-                    const user = userCredential.user;
-                    console.log("User signed up:", user.email);
-
-                    // Send email verification (optional)
-                    user.sendEmailVerification()
-                        .then(() => {
-                            console.log("Verification email sent!");
-                            alert("A verification email has been sent to your email address.");
-                        })
-                        .catch((error) => {
-                            console.error("Error sending email verification:", error.message);
-                            alert("Failed to send verification email.");
-                        });
-
-                    // Optionally save additional user data in Firestore
-                    saveUserProfile(user);
-                })
-                .catch((error) => {
-                    console.error("Error during signup:", error.message);
-                    alert("Signup failed: " + error.message);
-                });
-        }
 
         function showSignupForm() {
             document.getElementById('loginForm').classList.add('hidden');
@@ -374,35 +326,84 @@
             document.getElementById('loginForm').classList.remove('hidden');
         }
 
-        // Hide the black screen on successful login and show archive content
-        function setActiveMonth(month) {
-            console.log(month);
-            // Implement month-specific logic here
+        // Sign up new user
+        function signupUser() {
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            if (!email || !password) {
+                alert("Please fill in both fields.");
+                return;
+            }
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    user.sendEmailVerification().then(() => {
+                        alert('Verification email sent!');
+                    }).catch((error) => {
+                        alert("Error sending verification email: " + error.message);
+                    });
+                    saveUserProfile(user);
+                    document.getElementById('blackScreen').style.display = 'none';
+                    document.getElementById('archiveContent').style.display = 'block';
+                })
+                .catch((error) => {
+                    console.error("Error signing up:", error.message);
+                    if (error.code === 'auth/email-already-in-use') {
+                        alert("Email already in use.");
+                    } else {
+                        alert("Signup failed: " + error.message);
+                    }
+                });
         }
 
-        function playRandomMP3() {
-            console.log("Random MP3 played.");
-            // Implement random MP3 play functionality here
+        // Login user
+        function loginUser() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                alert("Please fill in both fields.");
+                return;
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    if (user.emailVerified) {
+                        document.getElementById('blackScreen').style.display = 'none';
+                        document.getElementById('archiveContent').style.display = 'block';
+                    } else {
+                        alert("Please verify your email.");
+                        auth.signOut();
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error logging in:", error.message);
+                    if (error.code === 'auth/user-not-found') {
+                        alert("User not found. Please check your email address.");
+                    } else if (error.code === 'auth/wrong-password') {
+                        alert("Incorrect password. Please try again.");
+                    } else {
+                        alert("Login failed: " + error.message);
+                    }
+                });
         }
 
-        function pauseAudio() {
-            console.log("Audio paused.");
-            // Implement pause audio functionality here
-        }
-
-        function skipAudio() {
-            console.log("Audio skipped.");
-            // Implement skip audio functionality here
-        }
-
-        function setVolume(volume) {
-            console.log("Volume set to:", volume);
-            // Implement volume control functionality here
-        }
-
-        function sortPosts(criteria) {
-            console.log(`Sorting posts by: ${criteria}`);
-            // Implement sorting logic here
+        // Save user profile in Firestore
+        function saveUserProfile(user) {
+            const db = firebase.firestore();
+            db.collection('users').doc(user.uid).set({
+                email: user.email,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            })
+            .then(() => {
+                console.log("User profile saved!");
+            })
+            .catch((error) => {
+                console.error("Error saving profile:", error.message);
+            });
         }
     </script>
 </body>
