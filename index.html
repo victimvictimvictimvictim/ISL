@@ -24,7 +24,7 @@
             cursor: pointer;
         }
         audio {
-            display: none;
+            display: block; /* Display the audio player */
         }
         #loginForm, #signupForm {
             display: none;
@@ -54,8 +54,8 @@
     </div>
 
     <!-- Image Link to Archive (hidden until logged in) -->
-    <a id="imageLink" href="#" onclick="redirectToArchive()" style="display:none;">
-        <img src="66.png" alt="ISL">
+    <a id="imageLink" href="#" onclick="redirectToArchive()" style="display:block;">
+        <img src="66.png" alt="ISL" onclick="showLoginForm();">
     </a>
 
     <!-- Audio Player -->
@@ -67,23 +67,14 @@
     <script>
         // Firebase configuration
         const firebaseConfig = {
-
-        apiKey: "AIzaSyDoim0HfMd649cWe3wTpLbjiZZP-su6YBU",
-
-        authDomain: "islisl.firebaseapp.com",
-
-        projectId: "islisl",
-
-        storageBucket: "islisl.firebasestorage.app",
-
-        messagingSenderId: "955676281907",
-
-        appId: "1:955676281907:web:808529df880af0aacc2746",
-
-        measurementId: "G-267W98LCC5"
-
+            apiKey: "AIzaSyDoim0HfMd649cWe3wTpLbjiZZP-su6YBU",
+            authDomain: "islisl.firebaseapp.com",
+            projectId: "islisl",
+            storageBucket: "islisl.firebasestorage.app",
+            messagingSenderId: "955676281907",
+            appId: "1:955676281907:web:808529df880af0aacc2746",
+            measurementId: "G-267W98LCC5"
         };
-
 
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
@@ -94,6 +85,7 @@
         function showLoginForm() {
             document.getElementById('signupForm').style.display = 'none';
             document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('imageLink').style.display = 'none'; // Hide the image link while showing login
         }
 
         // Show Sign Up Form
