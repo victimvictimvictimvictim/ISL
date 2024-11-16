@@ -302,6 +302,7 @@
         function loginUser() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
+            console.log('Login attempt:', email);
 
             if (!email || !password) {
                 alert("Please fill in both fields.");
@@ -322,19 +323,14 @@
                 })
                 .catch((error) => {
                     console.error("Login Error:", error);
-                    if (error.code === 'auth/user-not-found') {
-                        alert("User not found. Please check your email address.");
-                    } else if (error.code === 'auth/wrong-password') {
-                        alert("Incorrect password. Please try again.");
-                    } else {
-                        alert("Login failed: " + error.message);
-                    }
+                    alert("Login failed: " + error.message);
                 });
         }
 
         function signupUser() {
             const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPassword').value;
+            console.log('Signup attempt:', email);
 
             if (!email || !password) {
                 alert("Please fill in both fields.");
