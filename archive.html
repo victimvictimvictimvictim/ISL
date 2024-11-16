@@ -330,15 +330,27 @@
             const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPassword').value;
 
+            if (email === '' || password === '') {
+                alert("Please fill in both fields.");
+                return;
+            }
+
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     // Successfully signed up
                     const user = userCredential.user;
                     console.log("Signed up as", user.email);
+                    // Optionally, log the user in automatically after sign up
+                    // Hide the signup form and show login form (if needed)
                     showLoginForm();
+                    alert("Signup successful! You can now log in.");
                 })
                 .catch((error) => {
-                    console.error("Error signing up:", error.message);
+                    // Display error message
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert("Error: " + errorMessage);
+                    console.error("Error signing up:", errorCode, errorMessage);
                 });
         }
 
