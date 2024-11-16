@@ -8,7 +8,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
-        // Your Firebase configuration
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDoim0HfMd649cWe3wTpLbjiZZP-su6YBU",
             authDomain: "islisl.firebaseapp.com",
@@ -23,7 +23,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Handle Login
+        // Handle login
         async function loginUser(event) {
             event.preventDefault();
             const email = document.getElementById("email").value;
@@ -33,13 +33,12 @@
                 await signInWithEmailAndPassword(auth, email, password);
                 window.location.href = '/archive.html'; // Redirect to archive page
             } catch (error) {
-                const errorCode = error.code;
                 const errorMessage = error.message;
-                displayError(errorMessage); // Display error message on login failure
+                displayError(errorMessage); // Display error message
             }
         }
 
-        // Handle Sign Up
+        // Handle sign-up
         async function signupUser(event) {
             event.preventDefault();
             const email = document.getElementById("email").value;
@@ -49,9 +48,8 @@
                 await createUserWithEmailAndPassword(auth, email, password);
                 window.location.href = '/archive.html'; // Redirect to archive page after signup
             } catch (error) {
-                const errorCode = error.code;
                 const errorMessage = error.message;
-                displayError(errorMessage); // Display error message on signup failure
+                displayError(errorMessage); // Display error message
             }
         }
 
@@ -68,6 +66,11 @@
                 window.location.href = '/archive.html'; // Redirect to archive if already logged in
             }
         });
+
+        window.onload = function() {
+            document.getElementById("login-form").addEventListener("submit", loginUser);
+            document.getElementById("signup-form").addEventListener("submit", signupUser);
+        }
     </script>
 </head>
 <body>
@@ -85,7 +88,7 @@
         <input type="password" id="password" required>
         <br>
 
-        <button type="submit" onclick="loginUser(event)">Login</button>
+        <button type="submit">Login</button>
     </form>
 
     <p>Don't have an account? <button onclick="showSignupForm()">Sign Up</button></p>
@@ -100,7 +103,7 @@
         <input type="password" id="signup-password" required>
         <br>
 
-        <button type="submit" onclick="signupUser(event)">Sign Up</button>
+        <button type="submit">Sign Up</button>
     </form>
 
     <script>
