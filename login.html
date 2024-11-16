@@ -3,114 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - ISL Archive</title>
+    <title>Login Page</title>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
         // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDoim0HfMd649cWe3wTpLbjiZZP-su6YBU",
-            authDomain: "islisl.firebaseapp.com",
-            projectId: "islisl",
-            storageBucket: "islisl.firebasestorage.app",
-            messagingSenderId: "955676281907",
-            appId: "1:955676281907:web:808529df880af0aacc2746",
-            measurementId: "G-267W98LCC5"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
         };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Handle login
+        // Login function
         async function loginUser(event) {
             event.preventDefault();
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
 
             try {
-                await signInWithEmailAndPassword(auth, email, password);
-                window.location.href = '/archive.html'; // Redirect to archive page
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                window.location.href = '/archive.html'; // Redirect after successful login
             } catch (error) {
                 const errorMessage = error.message;
                 displayError(errorMessage); // Display error message
             }
         }
 
-        // Handle sign-up
+        // Signup function with display name
         async function signupUser(event) {
             event.preventDefault();
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
+            const email = document.getElementById("signup-email").value;
+            const password = document.getElementById("signup-password").value;
+            const displayName = document.getElementById("display-name").value;
 
             try {
-                await createUserWithEmailAndPassword(auth, email, password);
-                window.location.href = '/archive.html'; // Redirect to archive page after signup
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Set the display name after signup
+                await updateProfile(user, {
+                    displayName: displayName,
+                });
+
+                // Send email verification after signup
+                await sendEmailVerification(user);
+                alert('Sign up successful! Please verify your email.');
+
+                window.location.href = '/archive.html'; // Redirect after successful signup
             } catch (error) {
                 const errorMessage = error.message;
                 displayError(errorMessage); // Display error message
             }
         }
 
-        // Display error message
-        function displayError(message) {
-            const errorElement = document.getElementById("error-message");
-            errorElement.textContent = message;
-            errorElement.style.display = "block";
-        }
-
-        // Check if the user is already logged in (if they reload the page)
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                window.location.href = '/archive.html'; // Redirect to archive if already logged in
-            }
-        });
-
-        window.onload = function() {
-            document.getElementById("login-form").addEventListener("submit", loginUser);
-            document.getElementById("signup-form").addEventListener("submit", signupUser);
+        // Display error messages
+        function displayError(errorMessage) {
+            const errorContainer = document.getElementById("error-message");
+            errorContainer.textContent = errorMessage;
+            errorContainer.style.display = 'block'; // Show error
         }
     </script>
 </head>
 <body>
-    <h1>Login to ISL Archive</h1>
-
-    <div id="error-message" style="color: red; display: none;"></div>
+    <h1>Login / Sign Up</h1>
 
     <!-- Login Form -->
-    <form id="login-form">
-        <label for="email">Email:</label>
-        <input type="email" id="email" required>
+    <div id="login-form">
+        <h2>Login</h2>
+        <form id="login-form" onsubmit="loginUser(event)">
+            <label for="login-email">Email:</label>
+            <input type="email" id="login-email" required>
+            <br>
+
+            <label for="login-password">Password:</label>
+            <input type="password" id="login-password" required>
+            <br>
+
+            <button type="submit">Log In</button>
+        </form>
         <br>
+        <p>Don't have an account? <button onclick="toggleSignup()">Sign Up</button></p>
+    </div>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" required>
+    <!-- Sign Up Form -->
+    <div id="signup-form" style="display: none;">
+        <h2>Sign Up</h2>
+        <form id="signup-form" onsubmit="signupUser(event)">
+            <label for="signup-email">Email:</label>
+            <input type="email" id="signup-email" required>
+            <br>
+
+            <label for="signup-password">Password:</label>
+            <input type="password" id="signup-password" required>
+            <br>
+
+            <label for="display-name">Display Name:</label>
+            <input type="text" id="display-name" required>
+            <br>
+
+            <button type="submit">Sign Up</button>
+        </form>
         <br>
+        <p>Already have an account? <button onclick="toggleLogin()">Log In</button></p>
+    </div>
 
-        <button type="submit">Login</button>
-    </form>
-
-    <p>Don't have an account? <button onclick="showSignupForm()">Sign Up</button></p>
-
-    <!-- Signup Form -->
-    <form id="signup-form" style="display: none;">
-        <label for="email">Email:</label>
-        <input type="email" id="signup-email" required>
-        <br>
-
-        <label for="password">Password:</label>
-        <input type="password" id="signup-password" required>
-        <br>
-
-        <button type="submit">Sign Up</button>
-    </form>
+    <!-- Error Message Display -->
+    <div id="error-message" style="color: red; display: none;"></div>
 
     <script>
-        // Toggle between Login and Signup forms
-        function showSignupForm() {
+        // Function to toggle between login and signup forms
+        function toggleSignup() {
             document.getElementById("login-form").style.display = "none";
             document.getElementById("signup-form").style.display = "block";
+        }
+
+        function toggleLogin() {
+            document.getElementById("login-form").style.display = "block";
+            document.getElementById("signup-form").style.display = "none";
         }
     </script>
 </body>
