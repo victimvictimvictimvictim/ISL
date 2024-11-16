@@ -35,9 +35,11 @@
 
                 // Check if email is verified
                 if (user.emailVerified) {
-                    window.location.href = '/archive.html'; // Redirect to archive page
+                    window.location.href = '/archive.html'; // Redirect to archive page if email is verified
                 } else {
-                    alert('Please verify your email before logging in.');
+                    alert('Please verify your email before logging in. Check your inbox for a verification email.');
+                    // Optionally, you can send another email verification link if desired
+                    await sendEmailVerification(user);
                 }
             } catch (error) {
                 const errorMessage = error.message;
@@ -79,8 +81,12 @@
 
         // Check if the user is already logged in (if they reload the page)
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                window.location.href = '/archive.html'; // Redirect to archive if already logged in
+            if (user && user.emailVerified) {
+                window.location.href = '/archive.html'; // Redirect to archive if user is verified and already logged in
+            } else if (user && !user.emailVerified) {
+                // Show email verification reminder if user is logged in but email is not verified
+                alert('Please verify your email before accessing the site.');
+                auth.signOut(); // Optionally sign out if email is not verified
             }
         });
 
