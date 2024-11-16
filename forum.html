@@ -28,13 +28,13 @@
             margin-bottom: 20px;
         }
 
-        .month, .museum-tab, .play-random-mp3-btn {
+        .month, .play-random-mp3-btn {
             font-size: 1.2rem;
             margin: 10px 0;
             cursor: pointer;
         }
 
-        .month:hover, .museum-tab:hover, .play-random-mp3-btn:hover {
+        .month:hover, .play-random-mp3-btn:hover {
             color: #ffcc00;
         }
 
@@ -135,7 +135,7 @@
             display: none;
         }
 
-        .sidebar .month, .sidebar .museum-tab, .sidebar .play-random-mp3-btn {
+        .sidebar .month, .sidebar .play-random-mp3-btn {
             margin-bottom: 15px;
         }
 
@@ -247,7 +247,6 @@
         <h2>ISL FORUM</h2>
         <div class="month" onclick="setActiveMonth('december')">DEC24</div>
         <div class="month" onclick="setActiveMonth('november')">NOV24</div>
-        <div class="month" onclick="setActiveMonth('museum')">Museum</div>
         <div class="play-random-mp3-btn" onclick="playRandomMP3()">ISL RADIO</div>
 
         <div class="user-profile">
@@ -312,14 +311,8 @@
         let currentSortType = 'all';
 
         const posts = {
-            november: [
-                { title: "Mystery of the Pyramid", date: "2024-11-01", type: "image", src: "pyramid_image.jpg" },
-                { title: "First Mystery of November", date: "2024-11-10", type: "video", src: "djmix1.mp4" },
-            ],
-            december: [
-                { title: "Mystery of the Pyramid", date: "2024-12-01", type: "image", src: "pyramid_image.jpg" },
-                { title: "New Year's Eve Celebration", date: "2024-12-31", type: "video", src: "nye_video.mp4" },
-            ]
+            november: [],
+            december: []
         };
 
         function setActiveMonth(month) {
