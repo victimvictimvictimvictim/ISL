@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://unpkg.com/terminal.css@0.7.4/dist/terminal.min.css">
+    <style>
+        /* Your styles */
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            text-align: center;
+            margin-top: 100px;
+        }
+        .form-container input {
+            margin: 10px;
+            padding: 10px;
+        }
+        .form-container button {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        /* Additional styles... */
+    </style>
+</head>
+<body class="terminal-dark">
+    <div id="blackScreen" class="black-screen">
+        <h1>Please Log In</h1>
+        <div id="loginForm" class="form-container">
+            <input type="email" id="loginEmail" placeholder="Email" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button onclick="loginUser()">Log In</button>
+            <button onclick="showSignupForm()">Sign Up</button>
+        </div>
+        <div id="signupForm" class="form-container hidden">
+            <h2>Sign Up</h2>
+            <input type="email" id="signupEmail" placeholder="Email" required>
+            <input type="password" id="signupPassword" placeholder="Password" required>
+            <button onclick="signupUser()">Sign Up</button>
+            <button onclick="showLoginForm()">Already have an account? Log In</button>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDoim0HfMd649cWe3wTpLbjiZZP-su6YBU",
+            authDomain: "islisl.firebaseapp.com",
+            projectId: "islisl",
+            storageBucket: "islisl.firebasestorage.app",
+            messagingSenderId: "955676281907",
+            appId: "1:955676281907:web:808529df880af0aacc2746",
+            measurementId: "G-267W98LCC5"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const analytics = getAnalytics(app);
+
+        // Show login form
+        function showLoginForm() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('signupForm').classList.add('hidden');
+        }
+
+        // Show signup form
+        function showSignupForm() {
+            document.getElementById('signupForm').classList.remove('hidden');
+            document.getElementById('loginForm').classList.add('hidden');
+        }
+
+        // Login function
+        function loginUser() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Successful login
+                    document.getElementById('blackScreen').style.display = 'none';
+                    alert('Logged in successfully');
+                    window.location.href = "/archive.html"; // Redirect to the archive page
+                })
+                .catch((error) => {
+                    console.error('Login Error:', error.message);
+                    alert('Login failed: ' + error.message);
+                });
+        }
+
+        // Sign-up function
+        function signupUser() {
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    alert('Account created successfully!');
+                    showLoginForm();
+                })
+                .catch((error) => {
+                    console.error('Signup Error:', error.message);
+                    alert('Signup failed: ' + error.message);
+                });
+        }
+    </script>
+</body>
+</html>
