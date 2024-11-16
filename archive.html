@@ -330,6 +330,7 @@
                     const img = document.createElement('img');
                     img.src = post.src;
                     img.onclick = () => {
+                        // Only minimize images when clicked
                         postElement.classList.toggle('minimized');
                         content.classList.toggle('minimized');
                     };
@@ -338,9 +339,9 @@
                     const video = document.createElement('video');
                     video.src = post.src;
                     video.controls = true;
-                    video.onclick = () => {
-                        postElement.classList.toggle('minimized');
-                        content.classList.toggle('minimized');
+                    video.onclick = (e) => {
+                        // Prevent video from being minimized when clicked
+                        e.stopPropagation();
                     };
                     content.appendChild(video);
                 }
