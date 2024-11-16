@@ -4,6 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ISL ARCHIVE</title>
+    <script type="module">
+        // Import Firebase SDK
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDoim0HfMd649cWe3wTpLbjiZZP-su6YBU",
+            authDomain: "islisl.firebaseapp.com",
+            projectId: "islisl",
+            storageBucket: "islisl.firebasestorage.app",
+            messagingSenderId: "955676281907",
+            appId: "1:955676281907:web:808529df880af0aacc2746",
+            measurementId: "G-267W98LCC5"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Authentication state listener
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // If user is not logged in, redirect to login page
+                window.location.href = '/login.html'; 
+            }
+        });
+    </script>
     <link rel="stylesheet" href="https://unpkg.com/terminal.css@0.7.4/dist/terminal.min.css">
     <style>
         body {
