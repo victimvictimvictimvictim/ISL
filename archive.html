@@ -315,72 +315,52 @@
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
-            if (email === '' || password === '') {
-                alert("Please fill in both fields.");
-                return;
-            }
-
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
+                    // Successful login
                     const user = userCredential.user;
-
-                    // Check if the email is verified
-                    if (user.emailVerified) {
-                        console.log("Logged in as", user.email);
-                        // Proceed to the next step after successful login
-                        document.getElementById('blackScreen').style.display = 'none';
-                        document.getElementById('archiveContent').style.display = 'block';
-                    } else {
-                        // If email is not verified, show a message and log the user out
-                        alert("Please verify your email first. We've sent a verification email.");
-                        auth.signOut();
-                        showLoginForm();
-                    }
+                    console.log("Logged in as", user.email);
                 })
                 .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    alert("Error: " + errorMessage);
-                    console.error("Error logging in:", errorCode, errorMessage);
+                    console.error("Error logging in:", error.message);
+                    alert("Login failed: " + error.message);
                 });
         }
+
 
 
         function signupUser() {
             const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPassword').value;
 
-            if (email === '' || password === '') {
+            if (!email || !password) {
                 alert("Please fill in both fields.");
                 return;
             }
 
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
+                    // Successful signup
                     const user = userCredential.user;
-                    console.log("Signed up as", user.email);
+                    console.log("User signed up:", user.email);
 
-                    // Send email verification
+                    // Send email verification (optional)
                     user.sendEmailVerification()
                         .then(() => {
-                            // Let the user know they need to verify their email
-                            alert("Signup successful! Please check your email for a verification link.");
-                            
-                            // Optionally, you can log the user out until they verify their email
-                            auth.signOut();
-                            
-                            // Show the login form again
-                            showLoginForm();
+                            console.log("Verification email sent!");
+                            alert("A verification email has been sent to your email address.");
                         })
                         .catch((error) => {
-                            alert("Error sending verification email: " + error.message);
+                            console.error("Error sending email verification:", error.message);
+                            alert("Failed to send verification email.");
                         });
+
+                    // Optionally save additional user data in Firestore
+                    saveUserProfile(user);
                 })
                 .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    alert("Error: " + errorMessage);
-                    console.error("Error signing up:", errorCode, errorMessage);
+                    console.error("Error during signup:", error.message);
+                    alert("Signup failed: " + error.message);
                 });
         }
 
